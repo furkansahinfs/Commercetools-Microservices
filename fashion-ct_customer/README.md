@@ -1,4 +1,4 @@
-# FASHION CT Project With Gateway and Microservices
+# FASHION CT Customer Microservice
 
 ## Notes
 
@@ -9,7 +9,6 @@
 ## Highlighted Technologies
 
 - @nestjs
-- prisma
 - bcrypt 
 - dotenv
 - jade
@@ -23,21 +22,19 @@
 - uuid
 - zod
 
-## Project All Folder Hierarchy
+## Project Folder Hierarchy
 
     .
     ├── public             
     └── src
       ├── commercetools
       ├── controller
-      ├── db
       ├── dto
       ├── enums
       ├── error
       ├── i18n
       ├── middleware
       ├── modules
-      ├── prisma
       ├── services
       ├── util
       ├── types

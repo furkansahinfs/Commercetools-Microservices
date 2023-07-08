@@ -1,0 +1,6 @@
+{
+    "customer": {
+        "customer_not_found": "Customer with given ID is not found.",
+        "customers_not_found": "Customers are not found."
+    }
+}

@@ -1,4 +1,4 @@
-# FASHION CT Project With Gateway and Microservices
+# FASHION CT API Gateway
 
 ## Notes
 
@@ -10,25 +10,23 @@
 
 - @nestjs
 - prisma
-- bcrypt 
+- bcrypt
 - dotenv
 - jade
 - jsonwebtoken
 - nestjs-i18n
 - class-validator
-- commercetools
 - node-fetch
 - nodemailer
 - rxjs
 - uuid
 - zod
 
-## Project All Folder Hierarchy
+## Project Folder Hierarchy
 
     .
-    ├── public             
+    ├── public
     └── src
-      ├── commercetools
       ├── controller
       ├── db
       ├── dto
@@ -43,4 +41,5 @@
       ├── types
 
 ## Naming Convention
+
 will be added.

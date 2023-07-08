@@ -1,0 +1,5 @@
+{
+    "order": {
+        "order_not_found": "Order with given ID is not found."
+    }
+}
