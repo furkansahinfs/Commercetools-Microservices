@@ -1,1 +1,1 @@
-export { RoleGuard } from "./roleGuard.middleware";
+export { RolesGuard } from "./roles.guard";

@@ -4,7 +4,7 @@ import { CTCartService } from "src/services";
 import { CTController } from "./ct.controller";
 import { ROLES } from "src/enums/roles.enum";
 import { Roles } from "src/util";
-import { RoleGuard } from "src/middleware";
+import { RolesGuard } from "src/middleware";
 import { MessagePattern } from "@nestjs/microservices";
 import { Payload } from "src/dto/payload";
 
@@ -16,7 +16,7 @@ export class CTCartController extends CTController {
 
   @MessagePattern({ role: "/ct/carts", cmd: "get" })
   @Roles(ROLES.ADMIN, ROLES.CT_ADMIN)
-  @UseGuards(RoleGuard)
+  @UseGuards(RolesGuard)
   async getCarts(payload: Payload<GetCartFilterDTO>) {
     await this.ctCartService.getCart({ cartId: payload.dto.cartId });
   }

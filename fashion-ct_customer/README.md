@@ -4,12 +4,11 @@
 
 - **yarn** instead of _npm_ is strongly recommended.
 - following **eslint rules** is required.
-- DO NOT FORGET TO RUN "PRISMA GENERATE" !
 
 ## Highlighted Technologies
 
 - @nestjs
-- bcrypt 
+- bcrypt
 - dotenv
 - jade
 - jsonwebtoken
@@ -25,7 +24,7 @@
 ## Project Folder Hierarchy
 
     .
-    ├── public             
+    ├── public
     └── src
       ├── commercetools
       ├── controller
@@ -40,4 +39,5 @@
       ├── types
 
 ## Naming Convention
+
 will be added.

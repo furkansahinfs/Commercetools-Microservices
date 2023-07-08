@@ -9,7 +9,6 @@ export class CTProductService {
   constructor(private readonly i18n: I18nService) {}
 
   async getProducts(dto: GetProductsFilterDTO) {
-    console.log("aaa", dto);
     if (dto?.productId) {
       return await this.getProductWithId(dto.productId);
     }
@@ -44,12 +43,11 @@ export class CTProductService {
       .then(({ body }) =>
         ResponseBody().status(HttpStatus.OK).data(body).build(),
       )
-      .catch((error) => {
-        console.log(error);
-        return ResponseBody()
+      .catch((error) =>
+        ResponseBody()
           .status(HttpStatus.NOT_FOUND)
           .message({ error, id: productId })
-          .build();
-      });
+          .build(),
+      );
   }
 }

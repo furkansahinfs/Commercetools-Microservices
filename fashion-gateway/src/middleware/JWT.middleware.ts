@@ -17,14 +17,7 @@ export class JWTMiddleware implements NestMiddleware {
     let user;
 
     if (!accessToken) {
-      return res.status(HttpStatus.UNAUTHORIZED).send(
-        ResponseBody()
-          .status(HttpStatus.UNAUTHORIZED)
-          .message({
-            error: this.i18n.translate("auth.status.unauthorized"),
-          })
-          .build(),
-      );
+      return this.generateUnauthorizedResponse(res);
     }
 
     const { decoded, expired } = verifyToken(
@@ -40,20 +33,33 @@ export class JWTMiddleware implements NestMiddleware {
 
         user = await this.userService.findByUserId(userId);
       } catch (error) {
-        return res.status(HttpStatus.UNAUTHORIZED).send(
-          ResponseBody()
-            .status(HttpStatus.UNAUTHORIZED)
-            .message({
-              error: this.i18n.translate("auth.status.unauthorized"),
-            })
-            .build(),
-        );
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .send(
+            ResponseBody()
+              .status(HttpStatus.UNAUTHORIZED)
+              .message(error)
+              .build(),
+          );
       }
+    } else {
+      return this.generateUnauthorizedResponse(res);
     }
 
     if (user) {
       req.user = user;
     }
     next();
+  }
+
+  private generateUnauthorizedResponse(res: Response) {
+    return res.status(HttpStatus.UNAUTHORIZED).send(
+      ResponseBody()
+        .status(HttpStatus.UNAUTHORIZED)
+        .message({
+          error: this.i18n.translate("auth.status.unauthorized"),
+        })
+        .build(),
+    );
   }
 }
