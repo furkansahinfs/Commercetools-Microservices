@@ -6,4 +6,11 @@ export class CTService {
   public setCTCustomer(ctCustomer: Customer | undefined) {
     this.ctCustomer = ctCustomer;
   }
+
+  protected createWhereStringForInPredicate(predicateStringArr: string[]) {
+    const predicateStringsWithQuote =
+      '"' + predicateStringArr.join('", "') + '"';
+
+    return predicateStringsWithQuote;
+  }
 }

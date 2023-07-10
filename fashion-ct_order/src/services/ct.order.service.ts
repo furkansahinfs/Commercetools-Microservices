@@ -12,20 +12,26 @@ export class CTOrderService extends CTService {
   }
 
   async getOrders(dto: GetOrdersFilterDTO) {
-    if (dto?.orderId) {
-      return await this.getOrderWithId(dto.orderId);
-    }
+    const whereString = dto?.orderId
+      ? this.getWhereString({ orderIdParam: dto.orderId })
+      : dto?.orderNumber
+      ? this.getWhereString({ orderNumberParam: dto.orderNumber })
+      : undefined;
 
     return await CTApiRoot.orders()
       .get({
         queryArgs: {
           limit: dto?.limit ? parseInt(dto.limit) : undefined,
           offset: dto?.offset ? parseInt(dto.offset) : undefined,
+          where: whereString,
         },
       })
       .execute()
       .then(({ body }) =>
-        ResponseBody().status(HttpStatus.OK).data(body).build(),
+        ResponseBody()
+          .status(HttpStatus.OK)
+          .data({ total: body.total, results: body.results })
+          .build(),
       )
       .catch((error) =>
         ResponseBody()
@@ -50,7 +56,10 @@ export class CTOrderService extends CTService {
       })
       .execute()
       .then(({ body }) =>
-        ResponseBody().status(HttpStatus.OK).data(body).build(),
+        ResponseBody()
+          .status(HttpStatus.OK)
+          .data({ total: body.total, results: body.results })
+          .build(),
       )
       .catch((error) =>
         ResponseBody()
@@ -77,5 +86,30 @@ export class CTOrderService extends CTService {
           .message({ error, id: orderId })
           .build(),
       );
+  }
+
+  private getWhereString(whereParams: {
+    orderIdParam?: string;
+    orderNumberParam?: string;
+  }) {
+    const { orderIdParam, orderNumberParam } = whereParams;
+
+    if (orderIdParam) {
+      const predicateIds = orderIdParam.split(",");
+      return predicateIds?.length > 1
+        ? `id in (${this.createWhereStringForInPredicate(predicateIds)})`
+        : `id="${orderIdParam}"`;
+    }
+
+    if (orderNumberParam) {
+      const predicateCustomerNumbers = orderNumberParam.split(",");
+      return predicateCustomerNumbers?.length > 1
+        ? `orderNumber in (${this.createWhereStringForInPredicate(
+            predicateCustomerNumbers,
+          )})`
+        : `orderNumber="${orderNumberParam}"`;
+    }
+
+    return undefined;
   }
 }

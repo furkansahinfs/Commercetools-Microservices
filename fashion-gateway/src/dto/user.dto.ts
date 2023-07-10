@@ -22,4 +22,5 @@ export interface User {
   email?: string;
   last_logged_in?: Date;
   role?: string;
+  ct_customer_id?: string;
 }

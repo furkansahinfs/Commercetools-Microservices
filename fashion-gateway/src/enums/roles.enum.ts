@@ -1,5 +1,7 @@
+import { conf } from "src/config";
+
 export const ROLES = {
-  ADMIN: process.env.ROLE_KEY?.concat("ADMIN"),
-  CT_ADMIN: process.env.ROLE_KEY?.concat("CT_ADMIN"),
-  USER: process.env.ROLE_KEY?.concat("USER"),
+  ADMIN: conf.ROLE_KEY?.concat("ADMIN"),
+  CT_ADMIN: conf.ROLE_KEY?.concat("CT_ADMIN"),
+  USER: conf.ROLE_KEY?.concat("USER"),
 };

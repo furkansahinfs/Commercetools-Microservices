@@ -18,4 +18,7 @@ export class GetOrdersFilterDTO {
 
   @IsOptional()
   orderId?: string;
+
+  @IsOptional()
+  orderNumber?: string;
 }

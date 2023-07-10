@@ -1,11 +1,8 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./modules/app.module";
-import * as dotenv from "dotenv";
 import { ValidationPipe } from "@nestjs/common";
-import { promiseMiddleware } from "./middleware/promise.middleware";
 import { AllExceptionsFilter } from "./error";
-
-dotenv.config();
+import { conf } from "./config";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,7 +14,6 @@ async function bootstrap() {
     }),
   );
 
-  app.use(promiseMiddleware());
-  await app.listen(process.env.PORT);
+  await app.listen(conf.PORT);
 }
 bootstrap();

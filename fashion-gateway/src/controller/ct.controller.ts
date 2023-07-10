@@ -14,4 +14,9 @@ export class CTController {
   async getOrders(@Query() dto) {
     return this.ctService.getOrders(dto);
   }
+
+  @Get("/ct/me")
+  async getMe(@Query() dto) {
+    return this.ctService.me(dto);
+  }
 }

@@ -4,9 +4,11 @@ import { AuthService, UserService } from "src/services";
 import { PrismaService } from "src/services/prisma.service";
 import * as path from "path";
 import { AcceptLanguageResolver, I18nModule } from "nestjs-i18n";
-import { JWTMiddleware } from "src/middleware";
+import { JWTMiddleware, ResponseStatusInterceptor } from "src/middleware";
 import { CTService } from "src/services/ct.service";
 import { CTController } from "src/controller/ct.controller";
+import { UserRepository } from "src/repository/user.repository";
+import { APP_INTERCEPTOR } from "@nestjs/core";
 
 @Module({
   imports: [
@@ -20,7 +22,17 @@ import { CTController } from "src/controller/ct.controller";
     }),
   ],
   controllers: [AuthController, UserController, CTController],
-  providers: [PrismaService, AuthService, UserService, CTService],
+  providers: [
+    PrismaService,
+    AuthService,
+    UserService,
+    CTService,
+    UserRepository,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseStatusInterceptor,
+    },
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

@@ -8,7 +8,7 @@ export class CreateCustomerDTO {
   lastName: string;
 
   @IsNotEmpty()
-  username: string;
+  email: string;
 
   @IsNotEmpty()
   password: string;

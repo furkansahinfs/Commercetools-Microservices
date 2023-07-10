@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { GetCustomersFilterDTO } from "src/dto";
+import { CreateCustomerDTO, GetCustomersFilterDTO } from "src/dto";
 import { I18nService } from "nestjs-i18n";
 import { ResponseBody, ResponseBodyProps } from "src/util";
 import { CTApiRoot } from "../commercetools";
@@ -14,9 +14,9 @@ export class CTCustomerService extends CTService {
 
   async getCustomers(dto: GetCustomersFilterDTO): Promise<ResponseBodyProps> {
     const whereString = dto?.customerId
-      ? `id="${dto.customerId}"`
+      ? this.getWhereString({ customerIdParam: dto.customerId })
       : dto?.customerNumber
-      ? `customerNumber="${dto.customerNumber}"`
+      ? this.getWhereString({ customerNumberParam: dto.customerNumber })
       : undefined;
 
     return await CTApiRoot.customers()
@@ -29,7 +29,10 @@ export class CTCustomerService extends CTService {
       })
       .execute()
       .then(({ body }) =>
-        ResponseBody().status(HttpStatus.OK).data(body).build(),
+        ResponseBody()
+          .status(HttpStatus.OK)
+          .data({ total: body.total, results: body.results })
+          .build(),
       )
       .catch((error) =>
         ResponseBody().status(HttpStatus.NOT_FOUND).message({ error }).build(),
@@ -38,7 +41,7 @@ export class CTCustomerService extends CTService {
 
   async getMe(): Promise<ResponseBodyProps> {
     return await CTApiRoot.customers()
-      .withId({ ID: this.ctCustomer?.id })
+      .withId({ ID: this.customerId })
       .get()
       .execute()
       .then(({ body }) =>
@@ -52,13 +55,21 @@ export class CTCustomerService extends CTService {
       );
   }
 
-  async createCustomer(email: string, customerNumber: string) {
-    const customerDraft: CustomerDraft = {
-      email,
-      customerNumber,
-      password: "pwd",
-    };
-    return await CTApiRoot.customers().post({ body: customerDraft }).execute();
+  async createCustomer(dto: CreateCustomerDTO) {
+    const customerDraft: CustomerDraft = dto;
+
+    return await CTApiRoot.customers()
+      .post({ body: customerDraft })
+      .execute()
+      .then(({ body }) =>
+        ResponseBody().status(HttpStatus.OK).data(body).build(),
+      )
+      .catch((error) =>
+        ResponseBody()
+          .status(HttpStatus.BAD_REQUEST)
+          .message({ error: error?.body?.message })
+          .build(),
+      );
   }
 
   async findCustomerByCustomerNumber(
@@ -89,5 +100,30 @@ export class CTCustomerService extends CTService {
       .execute();
 
     return result?.body?.results?.[0];
+  }
+
+  private getWhereString(whereParams: {
+    customerIdParam?: string;
+    customerNumberParam?: string;
+  }) {
+    const { customerIdParam, customerNumberParam } = whereParams;
+
+    if (customerIdParam) {
+      const predicateIds = customerIdParam.split(",");
+      return predicateIds?.length > 1
+        ? `id in (${this.createWhereStringForInPredicate(predicateIds)})`
+        : `id="${customerIdParam}"`;
+    }
+
+    if (customerNumberParam) {
+      const predicateCustomerNumbers = customerNumberParam.split(",");
+      return predicateCustomerNumbers?.length > 1
+        ? `customerNumber in (${this.createWhereStringForInPredicate(
+            predicateCustomerNumbers,
+          )})`
+        : `customerNumber="${customerIdParam}"`;
+    }
+
+    return undefined;
   }
 }

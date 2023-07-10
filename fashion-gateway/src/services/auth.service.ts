@@ -1,9 +1,8 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { PrismaService } from "./prisma.service";
 import { LoginDTO, RefreshTokenDTO, RegisterDTO } from "src/dto";
 import { Request } from "express";
 import { I18nService } from "nestjs-i18n";
-import { GrantyTypes, ROLES } from "src/enums";
+import { GrantyTypes } from "src/enums";
 import { get } from "lodash";
 import {
   comparePassword,
@@ -14,13 +13,17 @@ import {
   getJWTUsername,
   getJWTUserId,
 } from "src/util";
-import { UserService } from "./user.service";
+import { UserRepository } from "src/repository/user.repository";
+import { CTService } from "./ct.service";
+import { User } from "src/dto/user.dto";
+import { conf } from "src/config";
+import { lastValueFrom } from "rxjs";
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
-    private userService: UserService,
+    private userRepository: UserRepository,
+    private ctService: CTService,
     private readonly i18n: I18nService,
   ) {}
 
@@ -30,7 +33,7 @@ export class AuthService {
     if (granty_type === GrantyTypes.PASSWORD) {
       const email = dto.email;
       const password = dto.password;
-      const user = await this.userService.findByUsername(email);
+      const user = await this.userRepository.findByUsername(email);
 
       if (user) {
         return await this.authenticateUserByPassword(email, password);
@@ -61,7 +64,7 @@ export class AuthService {
   }
 
   async register(dto: RegisterDTO) {
-    const maybeUser = await this.userService.findByUsername(dto.email);
+    const maybeUser = await this.userRepository.findByUsername(dto.email);
 
     if (maybeUser) {
       return ResponseBody()
@@ -71,13 +74,12 @@ export class AuthService {
     }
 
     try {
-      return await this.createUser(dto);
+      const user = await this.createUser(dto);
+      await this.createCommercetoolsCustomer(dto, user.id);
+
+      return user;
     } catch (e) {
-      await this.prisma.user.delete({
-        where: {
-          email: dto.email,
-        },
-      });
+      await this.userRepository.deleteUser(dto.email);
       return ResponseBody()
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .message({ error: e?.message ?? e })
@@ -85,9 +87,8 @@ export class AuthService {
     }
   }
 
-  private async createUser(dto: RegisterDTO) {
-    const { email, password, firstName, lastName } = dto;
-    const encryptedPassword: string = await encryptPassword(password);
+  private async createUser(dto: RegisterDTO): Promise<User> {
+    const encryptedPassword: string = await encryptPassword(dto.password);
 
     if (encryptedPassword === "ERROR") {
       return ResponseBody()
@@ -96,27 +97,31 @@ export class AuthService {
         .build();
     }
 
-    const user = await this.prisma.user.create({
-      data: {
-        email,
-        password: encryptedPassword,
-        firstName: firstName,
-        lastName: lastName,
-        role: dto.role ?? ROLES.USER,
-      },
-      select: {
-        email: true,
-        firstName: true,
-        lastName: true,
-        id: true,
-      },
+    return await this.userRepository.saveUser(dto, encryptedPassword);
+  }
+
+  private async createCommercetoolsCustomer(dto: RegisterDTO, userId: string) {
+    const ctCustomerPromise = await this.ctService.createCustomer({
+      ...dto,
+      customerNumber: userId,
     });
 
-    return ResponseBody().status(HttpStatus.OK).data(user).build();
+    const ctCustomer = await lastValueFrom(ctCustomerPromise);
+    if (ctCustomer?.message) {
+      throw new Error(ctCustomer.message?.error);
+    }
+
+    await this.userRepository
+      .updateUser(userId, {
+        ct_customer_id: ctCustomer?.data?.customer?.id,
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
   }
 
   private async authenticateUserByPassword(email: string, password: string) {
-    const maybeUser = await this.userService.findByUsername(email, {
+    const maybeUser = await this.userRepository.findByUsername(email, {
       password: true,
     });
     if (!maybeUser) {
@@ -127,13 +132,8 @@ export class AuthService {
     }
 
     if (await comparePassword(password, maybeUser.password)) {
-      await this.prisma.user.update({
-        where: {
-          id: maybeUser.id,
-        },
-        data: {
-          last_logged_in: new Date(Date.now()),
-        },
+      await this.userRepository.updateUser(maybeUser?.id, {
+        last_logged_in: new Date(Date.now()),
       });
 
       return ResponseBody()
@@ -142,12 +142,12 @@ export class AuthService {
           access_token: generateToken(
             { username: email, userId: maybeUser.id },
             "ACCESS_TOKEN_PRIVATE_KEY",
-            { expiresIn: process.env.ACCESS_TOKEN_TIME },
+            { expiresIn: conf.ACCESS_TOKEN_TIME },
           ),
           refresh_token: generateToken(
             { username: email, userId: maybeUser.id },
             "REFRESH_TOKEN_PRIVATE_KEY",
-            { expiresIn: process.env.REFRESH_TOKEN_TIME },
+            { expiresIn: conf.REFRESH_TOKEN_TIME },
           ),
           role: maybeUser.role,
         })
@@ -195,12 +195,12 @@ export class AuthService {
       const newAccessToken = generateToken(
         { username, userId: userId },
         "ACCESS_TOKEN_PRIVATE_KEY",
-        { expiresIn: process.env.ACCESS_TOKEN_TIME },
+        { expiresIn: conf.ACCESS_TOKEN_TIME },
       );
       const newRefreshToken = generateToken(
         { username, userId: userId },
         "REFRESH_TOKEN_PRIVATE_KEY",
-        { expiresIn: process.env.REFRESH_TOKEN_TIME },
+        { expiresIn: conf.REFRESH_TOKEN_TIME },
       );
       return { access_token: newAccessToken, refresh_token: newRefreshToken };
     } catch (error) {

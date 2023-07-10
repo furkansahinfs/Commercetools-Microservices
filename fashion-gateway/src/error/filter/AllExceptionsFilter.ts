@@ -11,6 +11,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception, host: ArgumentsHost) {
     const res = host.switchToHttp();
     const response = res.getResponse();
+
     if (exception?.message === "Forbidden resource") {
       response
         .status(HttpStatus.FORBIDDEN)
@@ -21,9 +22,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
             .build(),
         );
     } else {
-      response.status(exception?.status || HttpStatus.BAD_REQUEST).json(
+      response.status(exception?.statusCode || HttpStatus.BAD_REQUEST).json(
         ResponseBody()
-          .status(exception?.status || HttpStatus.BAD_REQUEST)
+          .status(exception?.statusCode || HttpStatus.BAD_REQUEST)
           .message({ error: exception })
           .build(),
       );

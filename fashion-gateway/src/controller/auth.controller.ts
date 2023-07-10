@@ -12,21 +12,18 @@ export class AuthController {
   async login(
     @Body() dto: LoginDTO | RefreshTokenDTO,
     @Req() request: Request,
-    @Res({ passthrough: true }) res: Response,
   ) {
     if (dto.granty_type === GrantyTypes.PASSWORD) {
-      res["promise"](await this.authService.login(dto as LoginDTO));
+      return await this.authService.login(dto as LoginDTO);
     } else {
-      res["promise"](
-        await this.authService.refreshToken(dto as RefreshTokenDTO, request),
+      return await this.authService.refreshToken(
+        dto as RefreshTokenDTO,
+        request,
       );
     }
   }
   @Post("/auth/register")
-  async register(
-    @Body() dto: RegisterDTO,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    res["promise"](await this.authService.register(dto));
+  async register(@Body() dto: RegisterDTO) {
+    return await this.authService.register(dto);
   }
 }
