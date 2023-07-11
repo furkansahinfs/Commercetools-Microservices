@@ -10,8 +10,8 @@ import { Payload } from "src/dto/payload";
 
 @Controller()
 export class CTOrderController extends CTController {
-  constructor(private readonly ctOrderService: CTOrderService) {
-    super();
+  constructor(protected readonly ctOrderService: CTOrderService) {
+    super(undefined, ctOrderService);
   }
 
   @MessagePattern({ role: "/ct/orders", cmd: "get" })

@@ -10,8 +10,8 @@ import { Payload } from "src/dto/payload";
 
 @Controller()
 export class CTCartController extends CTController {
-  constructor(private readonly ctCartService: CTCartService) {
-    super();
+  constructor(protected readonly ctCartService: CTCartService) {
+    super(ctCartService, undefined);
   }
 
   @MessagePattern({ role: "/ct/carts", cmd: "get" })
@@ -28,6 +28,7 @@ export class CTCartController extends CTController {
 
   @MessagePattern({ role: "/ct/carts", cmd: "update" })
   async updateCart(payload: Payload<UpdateCartDTO>) {
+    this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
     return await this.ctCartService.updateCart(payload.dto);
   }
 }

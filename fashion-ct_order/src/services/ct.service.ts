@@ -1,10 +1,8 @@
-import { Customer } from "@commercetools/platform-sdk";
-
 export class CTService {
-  protected ctCustomer: Customer;
+  protected customerId: string;
 
-  public setCTCustomer(ctCustomer: Customer | undefined) {
-    this.ctCustomer = ctCustomer;
+  public setCTCustomer(customerId: string) {
+    this.customerId = customerId;
   }
 
   protected createWhereStringForInPredicate(predicateStringArr: string[]) {

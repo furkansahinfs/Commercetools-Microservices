@@ -45,7 +45,7 @@ export class CTOrderService extends CTService {
   }
 
   async getMyOrders(dto: GetOrdersFilterDTO) {
-    const whereString = `customerId="${this.ctCustomer?.id}"`;
+    const whereString = `customerId="${this.customerId}"`;
     return await CTApiRoot.orders()
       .get({
         queryArgs: {

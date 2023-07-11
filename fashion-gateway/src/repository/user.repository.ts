@@ -56,6 +56,7 @@ export class UserRepository {
     if (user?.role) {
       user.role = user.role.replace(conf.ROLE_KEY, "");
     }
+
     return user;
   }
 

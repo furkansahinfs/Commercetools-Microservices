@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { CTService } from "src/services/ct.service";
 
 @Controller()
@@ -18,5 +18,15 @@ export class CTController {
   @Get("/ct/me")
   async getMe(@Query() dto) {
     return this.ctService.me(dto);
+  }
+
+  @Post("/ct/customers/action")
+  async updateCustomer(@Body() dto) {
+    return this.ctService.updateCustomer(dto);
+  }
+
+  @Post("/ct/carts/action")
+  async updateCart(@Body() dto) {
+    return this.ctService.updateCart(dto);
   }
 }

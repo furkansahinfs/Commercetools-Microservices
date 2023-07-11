@@ -50,16 +50,16 @@ export class CTService {
     );
   }
 
-  public async createCustomer(dto) {
+  public async me(dto) {
     return this.ctCustomerClient.send(
-      { role: "/ct/customers", cmd: "create" },
+      { role: "/ct/customers", cmd: "me" },
       { dto, user: this.authenticatedUser },
     );
   }
 
-  public async me(dto) {
+  public async updateCustomer(dto) {
     return this.ctCustomerClient.send(
-      { role: "/ct/customers", cmd: "get-me" },
+      { role: "/ct/customers", cmd: "update" },
       { dto, user: this.authenticatedUser },
     );
   }
@@ -67,6 +67,20 @@ export class CTService {
   public getOrders(dto) {
     return this.ctOrderClient.send(
       { role: "/ct/orders", cmd: "get" },
+      { dto, user: this.authenticatedUser },
+    );
+  }
+
+  public async updateCart(dto) {
+    return this.ctOrderClient.send(
+      { role: "/ct/carts", cmd: "update" },
+      { dto, user: this.authenticatedUser },
+    );
+  }
+
+  public async createCustomer(dto) {
+    return this.ctCustomerClient.send(
+      { role: "/ct/customers", cmd: "create" },
       { dto, user: this.authenticatedUser },
     );
   }

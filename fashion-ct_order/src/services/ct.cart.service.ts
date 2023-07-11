@@ -25,7 +25,7 @@ export class CTCartService extends CTService {
     const { cartId } = params;
     const whereString = cartId
       ? `id="${cartId}"`
-      : `customerId="${this.ctCustomer?.id}"`;
+      : `customerId="${this.customerId}"`;
 
     return await CTApiRoot.carts()
       .get({
@@ -43,10 +43,10 @@ export class CTCartService extends CTService {
   }
 
   async createCart(dto: CreateCartDTO): Promise<ResponseBodyProps> {
-    if (this.ctCustomer) {
+    if (this.customerId) {
       const cartDraft: CartDraft = {
         currency: "USD",
-        customerId: this.ctCustomer?.id,
+        customerId: this.customerId,
         lineItems: dto.products,
       };
       return await CTApiRoot.carts()
@@ -69,7 +69,7 @@ export class CTCartService extends CTService {
     let cartId = dto.cartId;
     if (!cartId) {
       const cart: Cart | undefined = await this.getCustomerActiveCart(
-        this.ctCustomer?.id,
+        this.customerId,
       );
       cartId = cart?.id;
     }
@@ -104,6 +104,10 @@ export class CTCartService extends CTService {
       })
       .execute();
 
+    if (!result?.body?.results?.[0]) {
+      const createdCart = await this.createCart({});
+      return createdCart?.data;
+    }
     return result?.body?.results?.[0];
   }
 

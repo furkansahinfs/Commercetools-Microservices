@@ -1,5 +1,10 @@
 import { Controller, UseGuards } from "@nestjs/common";
-import { CreateCustomerDTO, GetCustomersFilterDTO, Payload } from "src/dto";
+import {
+  CreateCustomerDTO,
+  GetCustomersFilterDTO,
+  Payload,
+  UpdateCustomerDTO,
+} from "src/dto";
 import { CTCustomerService } from "src/services";
 import { CTController } from "./ct.controller";
 import { Roles } from "src/util";
@@ -20,7 +25,7 @@ export class CTCustomerController extends CTController {
     return await this.ctCustomerService.getCustomers(payload.dto);
   }
 
-  @MessagePattern({ role: "/ct/customers", cmd: "get-me" })
+  @MessagePattern({ role: "/ct/customers", cmd: "me" })
   async getMe(payload: Payload<GetCustomersFilterDTO>) {
     this.ctCustomerService.setCTCustomer(payload.user?.ct_customer_id);
     return await this.ctCustomerService.getMe();
@@ -29,5 +34,11 @@ export class CTCustomerController extends CTController {
   @MessagePattern({ role: "/ct/customers", cmd: "create" })
   async create(payload: Payload<CreateCustomerDTO>) {
     return await this.ctCustomerService.createCustomer(payload.dto);
+  }
+
+  @MessagePattern({ role: "/ct/customers", cmd: "update" })
+  async update(payload: Payload<UpdateCustomerDTO>) {
+    this.ctCustomerService.setCTCustomer(payload.user?.ct_customer_id);
+    return await this.ctCustomerService.updateCustomer(payload.dto);
   }
 }
