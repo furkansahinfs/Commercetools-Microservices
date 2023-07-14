@@ -48,7 +48,7 @@ export class CTCustomerService extends CTService {
           .build(),
       )
       .catch((error) =>
-        ResponseBody().status(HttpStatus.NOT_FOUND).message({ error }).build(),
+        ResponseBody().status(error?.statusCode).message({ error }).build(),
       );
   }
 
@@ -62,7 +62,7 @@ export class CTCustomerService extends CTService {
       )
       .catch((error) =>
         ResponseBody()
-          .status(HttpStatus.NOT_FOUND)
+          .status(error?.statusCode)
           .message({ error: error?.body?.message })
           .build(),
       );

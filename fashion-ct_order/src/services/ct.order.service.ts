@@ -35,7 +35,7 @@ export class CTOrderService extends CTService {
       )
       .catch((error) =>
         ResponseBody()
-          .status(HttpStatus.NOT_FOUND)
+          .status(error?.statusCode)
           .message({
             error,
             id: dto.orderId,
@@ -63,7 +63,7 @@ export class CTOrderService extends CTService {
       )
       .catch((error) =>
         ResponseBody()
-          .status(HttpStatus.NOT_FOUND)
+          .status(error?.statusCode)
           .message({
             error,
             id: dto.orderId,
@@ -82,7 +82,7 @@ export class CTOrderService extends CTService {
       )
       .catch((error) =>
         ResponseBody()
-          .status(HttpStatus.NOT_FOUND)
+          .status(error?.statusCode)
           .message({ error, id: orderId })
           .build(),
       );

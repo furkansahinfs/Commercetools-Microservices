@@ -1,4 +1,4 @@
-import { LineItemDraft } from "@commercetools/platform-sdk";
+import { AddressDraft, LineItemDraft } from "@commercetools/platform-sdk";
 import { IsEnum, IsNotEmpty, IsOptional, ValidateIf } from "class-validator";
 import { CartActions } from "../enums";
 
@@ -16,7 +16,11 @@ export class UpdateCartDTO {
   @IsEnum(CartActions)
   actionType: string;
 
-  @ValidateIf((o) => o.actionType !== CartActions.ADD)
+  @ValidateIf(
+    (o) =>
+      o.actionType === CartActions.CHANGEQUANTITY ||
+      o.actionType === CartActions.REMOVE,
+  )
   @IsNotEmpty()
   lineItemId: string;
 
@@ -30,4 +34,12 @@ export class UpdateCartDTO {
   @ValidateIf((o) => o.actionType === CartActions.CHANGEQUANTITY)
   @IsNotEmpty()
   quantity: number;
+
+  @ValidateIf(
+    (o) =>
+      o.actionType === CartActions.SET_BILLING_ADDRESS ||
+      o.actionType === CartActions.SET_SHIPPING_ADDRESS,
+  )
+  @IsNotEmpty()
+  address: AddressDraft;
 }

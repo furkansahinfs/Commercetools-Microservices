@@ -18,7 +18,8 @@ export class CTCartController extends CTController {
   @Roles(ROLES.ADMIN, ROLES.CT_ADMIN)
   @UseGuards(RolesGuard)
   async getCarts(payload: Payload<GetCartFilterDTO>) {
-    await this.ctCartService.getCart({ cartId: payload.dto.cartId });
+    this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
+    return await this.ctCartService.getCarts({ cartId: payload.dto.cartId });
   }
 
   @MessagePattern({ role: "/ct/carts", cmd: "create" })

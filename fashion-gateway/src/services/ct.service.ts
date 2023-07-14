@@ -71,6 +71,13 @@ export class CTService {
     );
   }
 
+  public async getCarts(dto) {
+    return this.ctOrderClient.send(
+      { role: "/ct/carts", cmd: "get" },
+      { dto, user: this.authenticatedUser },
+    );
+  }
+
   public async updateCart(dto) {
     return this.ctOrderClient.send(
       { role: "/ct/carts", cmd: "update" },

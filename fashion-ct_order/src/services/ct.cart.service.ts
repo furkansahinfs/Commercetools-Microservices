@@ -4,11 +4,14 @@ import { I18nService } from "nestjs-i18n";
 import { ResponseBody, ResponseBodyProps } from "src/util";
 import { CTApiRoot } from "../commercetools";
 import {
+  AddressDraft,
   Cart,
   CartAddLineItemAction,
   CartChangeLineItemQuantityAction,
   CartDraft,
   CartRemoveLineItemAction,
+  CartSetBillingAddressAction,
+  CartSetShippingAddressAction,
   CartUpdate,
   CartUpdateAction,
 } from "@commercetools/platform-sdk";
@@ -21,7 +24,7 @@ export class CTCartService extends CTService {
     super();
   }
 
-  async getCart(params: { cartId?: string }): Promise<ResponseBodyProps> {
+  async getCarts(params: { cartId?: string }): Promise<ResponseBodyProps> {
     const { cartId } = params;
     const whereString = cartId
       ? `id="${cartId}"`
@@ -38,7 +41,7 @@ export class CTCartService extends CTService {
         ResponseBody().status(HttpStatus.OK).data(body).build(),
       )
       .catch((error) =>
-        ResponseBody().status(HttpStatus.NOT_FOUND).message({ error }).build(),
+        ResponseBody().status(error?.statusCode).message({ error }).build(),
       );
   }
 
@@ -56,16 +59,13 @@ export class CTCartService extends CTService {
           ResponseBody().status(HttpStatus.OK).data(body).build(),
         )
         .catch((error) =>
-          ResponseBody()
-            .status(HttpStatus.NOT_FOUND)
-            .message({ error })
-            .build(),
+          ResponseBody().status(error?.statusCode).message({ error }).build(),
         );
     }
   }
 
   async updateCart(dto: UpdateCartDTO): Promise<ResponseBodyProps> {
-    const { actionType, lineItemId, lineItemSKU, quantity } = dto;
+    const { actionType, lineItemId, lineItemSKU, quantity, address } = dto;
     let cartId = dto.cartId;
     if (!cartId) {
       const cart: Cart | undefined = await this.getCustomerActiveCart(
@@ -75,6 +75,7 @@ export class CTCartService extends CTService {
     }
     const actions: CartUpdateAction[] = [];
     let action: CartUpdateAction = null;
+
     switch (actionType) {
       case CartActions.ADD:
         action = this.generateAddLineItemAction(lineItemSKU);
@@ -85,12 +86,18 @@ export class CTCartService extends CTService {
       case CartActions.CHANGEQUANTITY:
         action = this.generateChangeineItemQuantityAction(lineItemId, quantity);
         break;
+      case CartActions.SET_SHIPPING_ADDRESS:
+        action = this.generateAddressAction(address, "SHIPPING");
+        break;
+      case CartActions.SET_BILLING_ADDRESS:
+        action = this.generateAddressAction(address, "BILLING");
+        break;
       default:
         break;
     }
 
     actions.push(action);
-    return await this.updateCartLineItems(actions, cartId);
+    return await this.updateCartWithActions(actions, cartId);
   }
 
   private async getCustomerActiveCart(customerId: string) {
@@ -108,10 +115,11 @@ export class CTCartService extends CTService {
       const createdCart = await this.createCart({});
       return createdCart?.data;
     }
+
     return result?.body?.results?.[0];
   }
 
-  private async updateCartLineItems(
+  private async updateCartWithActions(
     lineItemsAction: CartUpdateAction[],
     cartId: string,
   ) {
@@ -129,8 +137,22 @@ export class CTCartService extends CTService {
         ResponseBody().status(HttpStatus.OK).data(body).build(),
       )
       .catch((error) =>
-        ResponseBody().status(HttpStatus.NOT_FOUND).message({ error }).build(),
+        ResponseBody().status(error?.statusCode).message({ error }).build(),
       );
+  }
+
+  private generateAddressAction(
+    address: AddressDraft,
+    type: "SHIPPING" | "BILLING",
+  ) {
+    const setAdressAction:
+      | CartSetShippingAddressAction
+      | CartSetBillingAddressAction = {
+      address: address,
+      action: type === "SHIPPING" ? "setShippingAddress" : "setBillingAddress",
+    };
+
+    return setAdressAction;
   }
 
   private generateAddLineItemAction(lineItemSKU: string): CartUpdateAction {
@@ -166,7 +188,27 @@ export class CTCartService extends CTService {
   }
 
   private async getCartVersion(cartId: string) {
-    const cartResponse: ResponseBodyProps = await this.getCart({ cartId });
+    const cartResponse: ResponseBodyProps = await this.getCarts({ cartId });
     return cartResponse?.data?.results[0]?.version;
+  }
+
+  private async setCartDefaults(cart: Cart) {
+    return await CTApiRoot.carts()
+      .withId({ ID: cart.id })
+      .post({
+        body: {
+          version: cart.version,
+          actions: [
+            { action: "setShippingAddress", address: { country: "US" } },
+          ],
+        },
+      })
+      .execute()
+      .then(({ body }) =>
+        ResponseBody().status(HttpStatus.OK).data(body).build(),
+      )
+      .catch((error) =>
+        ResponseBody().status(error?.statusCode).message({ error }).build(),
+      );
   }
 }
