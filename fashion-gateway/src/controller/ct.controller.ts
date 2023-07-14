@@ -1,5 +1,4 @@
 import { Body, Controller, Get, Post, Query } from "@nestjs/common";
-import { lastValueFrom } from "rxjs";
 import { CTService } from "src/services/ct.service";
 
 @Controller()

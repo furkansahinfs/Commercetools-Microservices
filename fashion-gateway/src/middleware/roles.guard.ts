@@ -17,6 +17,6 @@ export class RolesGuard implements CanActivate {
   }
 
   matchRoles(roles: string[], userRole: string) {
-    return roles.some((role) => role === conf.OLE_KEY.concat(userRole, ""));
+    return roles.some((role) => role === conf.ROLE_KEY.concat(userRole, ""));
   }
 }
