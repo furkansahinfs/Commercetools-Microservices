@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { getJWTUserId, ResponseBody, verifyToken } from "src/util";
 import { UserService } from "src/services";
 import { HttpStatus, Injectable, NestMiddleware } from "@nestjs/common";
 import { I18nService } from "nestjs-i18n";
+import { RequestWithUser } from "src/interface";
 
 @Injectable()
 export class JWTMiddleware implements NestMiddleware {
@@ -11,7 +12,7 @@ export class JWTMiddleware implements NestMiddleware {
     private readonly i18n: I18nService,
   ) {}
 
-  async use(req: Request | any, res: Response, next: () => void) {
+  async use(req: RequestWithUser, res: Response, next: () => void) {
     const accessTokenStr = req.headers.authorization;
     const accessToken = accessTokenStr?.replace("Bearer ", "");
     let user;

@@ -3,8 +3,8 @@ import { PrismaService } from "./prisma.service";
 import { I18nService } from "nestjs-i18n";
 import { GetUsersFilterDTO } from "src/dto";
 import { ResponseBody, getJWTUserId } from "src/util";
-import { User } from "src/dto/user.dto";
-import { UserRepository } from "src/repository/user.repository";
+import { UserRepository } from "src/repository";
+import { User } from "src/types";
 
 @Injectable()
 export class UserService {
