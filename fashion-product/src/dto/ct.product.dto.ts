@@ -4,6 +4,9 @@ import {
   IsOptional,
   ValidateIf,
 } from "class-validator";
+import { Payload } from "./payload";
+import { Type } from "class-transformer";
+import { User } from "src/types";
 
 export class GetProductsFilterDTO {
   @ValidateIf((o) => !o.productId)
@@ -18,4 +21,10 @@ export class GetProductsFilterDTO {
 
   @IsOptional()
   productIds?: string;
+}
+
+export class GetProductsFilterPayload extends Payload<GetProductsFilterDTO> {
+  @Type(() => GetProductsFilterDTO)
+  dto: GetProductsFilterDTO;
+  user: User;
 }

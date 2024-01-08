@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { CTCartController, CTOrderController } from "src/controller";
-import { CTCartService, CTOrderService } from "src/services";
+import { CTOrderController } from "src/controller";
+import { CTOrderService } from "src/services";
 import * as path from "path";
 import { AcceptLanguageResolver, I18nModule } from "nestjs-i18n";
 
@@ -15,7 +15,7 @@ import { AcceptLanguageResolver, I18nModule } from "nestjs-i18n";
       resolvers: [AcceptLanguageResolver],
     }),
   ],
-  controllers: [CTCartController, CTOrderController],
-  providers: [CTCartService, CTOrderService],
+  controllers: [CTOrderController],
+  providers: [CTOrderService],
 })
 export class AppModule {}

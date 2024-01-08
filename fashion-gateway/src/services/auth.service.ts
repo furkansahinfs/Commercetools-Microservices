@@ -13,18 +13,18 @@ import {
   getJWTUsername,
   getJWTUserId,
 } from "src/util";
-import { UserRepository } from "src/repository/user.repository";
-import { CTService } from "./ct.service";
-import { User } from "src/dto/user.dto";
 import { conf } from "src/config";
 import { lastValueFrom } from "rxjs";
+import { User } from "src/types";
+import { CTCustomerService } from "./commercetools";
+import { UserRepository } from "src/repository";
 
 @Injectable()
 export class AuthService {
   constructor(
     private userRepository: UserRepository,
-    private ctService: CTService,
     private readonly i18n: I18nService,
+    private ctCustomerService: CTCustomerService,
   ) {}
 
   async login(dto: LoginDTO) {
@@ -101,7 +101,7 @@ export class AuthService {
   }
 
   private async createCommercetoolsCustomer(dto: RegisterDTO, userId: string) {
-    const ctCustomerPromise = await this.ctService.createCustomer({
+    const ctCustomerPromise = await this.ctCustomerService.createCustomer({
       ...dto,
       customerNumber: userId,
     });

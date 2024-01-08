@@ -23,6 +23,11 @@ export class CTCartController {
     return this.ctCartService.getCarts(dto);
   }
 
+  @Get("/ct/carts/me")
+  async getMyCarts(@Query() dto) {
+    return this.ctCartService.getMyCarts(dto);
+  }
+
   @Patch("/ct/carts")
   async updateCart(@Body() dto) {
     return this.ctCartService.updateCart(dto);

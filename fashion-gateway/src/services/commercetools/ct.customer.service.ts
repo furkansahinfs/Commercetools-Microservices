@@ -4,10 +4,10 @@ import {
   ClientProxyFactory,
   Transport,
 } from "@nestjs/microservices";
-import { User } from "src/dto/user.dto";
 import { REQUEST } from "@nestjs/core";
 import { Request } from "express";
 import { conf } from "src/config";
+import { User } from "src/types";
 
 @Injectable({ scope: Scope.REQUEST })
 export class CTCustomerService {

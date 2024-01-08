@@ -4,15 +4,15 @@ import {
   ClientProxyFactory,
   Transport,
 } from "@nestjs/microservices";
-import { CTUser } from "src/dto/user.dto";
 import { REQUEST } from "@nestjs/core";
 import { Request } from "express";
 import { conf } from "src/config";
+import { User } from "src/types";
 
 @Injectable({ scope: Scope.REQUEST })
 export class CTOrderService {
   private ctOrderClient: ClientProxy;
-  private authenticatedUser: CTUser = this.request["user"];
+  private authenticatedUser: User = this.request["user"];
 
   constructor(@Inject(REQUEST) private readonly request: Request) {
     const host = conf.CLIENT_HOST;
@@ -31,9 +31,17 @@ export class CTOrderService {
       { dto, user: this.authenticatedUser },
     );
   }
+
   public getMyOrders(dto) {
     return this.ctOrderClient.send(
       { role: "orders", cmd: "get-me" },
+      { dto, user: this.authenticatedUser },
+    );
+  }
+
+  public createOrder(dto) {
+    return this.ctOrderClient.send(
+      { role: "orders", cmd: "post" },
       { dto, user: this.authenticatedUser },
     );
   }

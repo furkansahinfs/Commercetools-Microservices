@@ -1,4 +1,5 @@
 import {
+  Cart,
   ClientResponse,
   Order,
   OrderPagedQueryResponse,
@@ -22,4 +23,5 @@ export interface ICTOrderSDK {
     offset,
   }: FindOrdersParam): Promise<ClientResponse<OrderPagedQueryResponse>>;
   findOrderById(orderId: string): Promise<ClientResponse<Order>>;
+  findCartById(cartId: string, customerId): Promise<ClientResponse<Cart>>;
 }

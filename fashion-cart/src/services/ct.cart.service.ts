@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { CreateCartDTO, UpdateCartDTO } from "src/dto";
 import { I18nService } from "nestjs-i18n";
-import { ResponseBody, ResponseBodyProps } from "src/util";
+import { ResponseBody } from "src/util";
 import { CTCartSDK } from "../commercetools";
 import {
   AddressDraft,
@@ -16,6 +16,7 @@ import {
 } from "@commercetools/platform-sdk";
 import { CartActions } from "src/enums";
 import { CTService } from "./ct.service";
+import { IResponse } from "src/types";
 
 @Injectable()
 export class CTCartService extends CTService {
@@ -25,7 +26,7 @@ export class CTCartService extends CTService {
     this.CTCartSDK = new CTCartSDK();
   }
 
-  async getCarts(params: { cartId?: string }): Promise<ResponseBodyProps> {
+  async getCarts(params: { cartId?: string }): Promise<IResponse> {
     const { cartId } = params;
     const whereString = cartId
       ? `id="${cartId}"`
@@ -44,7 +45,7 @@ export class CTCartService extends CTService {
       );
   }
 
-  async createCart(dto: CreateCartDTO): Promise<ResponseBodyProps> {
+  async createCart(dto: CreateCartDTO): Promise<IResponse> {
     if (this.customerId) {
       const cartDraft: CartDraft = {
         currency: "USD",
@@ -61,7 +62,7 @@ export class CTCartService extends CTService {
     }
   }
 
-  async updateCart(dto: UpdateCartDTO): Promise<ResponseBodyProps> {
+  async updateCart(dto: UpdateCartDTO): Promise<IResponse> {
     const { actionType, lineItemId, lineItemSKU, quantity, address } = dto;
     let cartId = dto.cartId;
     if (!cartId) {

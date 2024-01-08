@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { GetOrdersFilterDTO } from "src/dto";
+import { CreateOrderDTO, GetOrdersFilterDTO } from "src/dto";
 import { I18nService } from "nestjs-i18n";
 import { ResponseBody } from "src/util";
 import { CTOrderSDK } from "../commercetools";
@@ -79,5 +79,32 @@ export class CTOrderService extends CTService {
           .message({ error, id: orderId })
           .build(),
       );
+  }
+
+  async createOrder(dto: CreateOrderDTO) {
+    try {
+      const existingCart = await this.CTOrderSDK.findCartById(
+        dto.cartId,
+        this.customerId,
+      );
+
+      if (existingCart.body?.id) {
+        return await this.CTOrderSDK.createOrder(existingCart.body)
+          .then(({ body }) =>
+            ResponseBody().status(HttpStatus.OK).data(body).build(),
+          )
+          .catch((error) =>
+            ResponseBody()
+              .status(error?.statusCode)
+              .message({ error, id: dto.cartId })
+              .build(),
+          );
+      }
+    } catch (error) {
+      return ResponseBody()
+        .status(error?.statusCode)
+        .message({ error, id: dto.cartId })
+        .build();
+    }
   }
 }

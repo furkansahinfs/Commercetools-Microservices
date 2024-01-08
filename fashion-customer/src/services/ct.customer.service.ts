@@ -5,7 +5,7 @@ import {
   UpdateCustomerDTO,
 } from "src/dto";
 import { I18nService } from "nestjs-i18n";
-import { ResponseBody, ResponseBodyProps } from "src/util";
+import { ResponseBody } from "src/util";
 import {
   AddressDraft,
   Customer,
@@ -17,6 +17,7 @@ import {
 import { CTService } from "./ct.service";
 import { CustomerActions } from "src/enums/customerAction.enum";
 import { CTCustomerSDK } from "src/commercetools";
+import { IResponse } from "src/types";
 
 @Injectable()
 export class CTCustomerService extends CTService {
@@ -26,7 +27,7 @@ export class CTCustomerService extends CTService {
     this.CTCustomerSDK = new CTCustomerSDK();
   }
 
-  async getCustomers(dto: GetCustomersFilterDTO): Promise<ResponseBodyProps> {
+  async getCustomers(dto: GetCustomersFilterDTO): Promise<IResponse> {
     const where = dto?.customerId
       ? this.getWhereString({ customerIdParam: dto.customerId })
       : dto?.customerNumber
@@ -49,7 +50,7 @@ export class CTCustomerService extends CTService {
       );
   }
 
-  async getMe(): Promise<ResponseBodyProps> {
+  async getMe(): Promise<IResponse> {
     const customer = await this.CTCustomerSDK.findCustomerById(this.customerId);
     if (customer) {
       return ResponseBody().status(HttpStatus.OK).data(customer).build();
@@ -66,6 +67,7 @@ export class CTCustomerService extends CTService {
       firstName: dto.firstName,
       lastName: dto.lastName,
       customerNumber: dto.customerNumber,
+      password: dto.password,
     };
 
     return await this.CTCustomerSDK.createCustomer(customerDraft)
