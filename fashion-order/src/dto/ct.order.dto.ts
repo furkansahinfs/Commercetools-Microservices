@@ -2,6 +2,7 @@ import {
   IsNotEmpty,
   IsNumberString,
   IsOptional,
+  IsString,
   ValidateIf,
 } from "class-validator";
 import { User } from "src/types";
@@ -20,9 +21,11 @@ export class GetOrdersFilterDTO {
   offset: string;
 
   @IsOptional()
+  @IsString()
   orderId?: string;
 
   @IsOptional()
+  @IsString()
   orderNumber?: string;
 }
 
@@ -35,6 +38,7 @@ export class GetOrdersFilterPayload extends Payload<GetOrdersFilterDTO> {
 
 export class CreateOrderDTO {
   @IsNotEmpty()
+  @IsString()
   cartId?: string;
 }
 

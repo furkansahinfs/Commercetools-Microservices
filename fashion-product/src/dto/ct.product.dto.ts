@@ -2,6 +2,7 @@ import {
   IsNotEmpty,
   IsNumberString,
   IsOptional,
+  IsString,
   ValidateIf,
 } from "class-validator";
 import { Payload } from "./payload";
@@ -20,6 +21,7 @@ export class GetProductsFilterDTO {
   offset: string;
 
   @IsOptional()
+  @IsString()
   productIds?: string;
 }
 
