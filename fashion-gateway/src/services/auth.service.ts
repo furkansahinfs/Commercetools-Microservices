@@ -77,7 +77,7 @@ export class AuthService {
       const user = await this.createUser(dto);
       await this.createCommercetoolsCustomer(dto, user.id);
 
-      return user;
+      return ResponseBody().status(HttpStatus.CREATED).data(user).build();
     } catch (e) {
       await this.userRepository.deleteUser(dto.email);
       return ResponseBody()

@@ -1,2 +1,2 @@
-export { IResponse } from "./response";
+export { IResponse, ResponseMessage } from "./response";
 export { User } from "./user";

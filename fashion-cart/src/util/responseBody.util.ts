@@ -1,5 +1,5 @@
 import { HttpStatus } from "@nestjs/common";
-import { IResponse } from "src/types";
+import { IResponse, ResponseMessage } from "src/types";
 
 export function ResponseBody() {
   const response: IResponse = {
@@ -15,7 +15,7 @@ export function ResponseBody() {
       return this;
     },
     message: function (message: any) {
-      response.message = message;
+      response.message = generateBodyMessage(message);
       response.success = false;
       return this;
     },
@@ -28,3 +28,38 @@ export function ResponseBody() {
     },
   };
 }
+const generateBodyMessage = (message: any): ResponseMessage => {
+  if (message?.error) {
+    return generateErrorObject(message.error);
+  }
+
+  return { error: message };
+};
+
+const generateErrorObject = (error: any): ResponseMessage => {
+  const conditions = [
+    {
+      // holding validation errors
+      check: () => Array.isArray(error),
+      result: { error: error.toString() },
+    },
+    {
+      // holding person defined errors
+      check: () => typeof error === "string",
+      result: { error },
+    },
+    {
+      // holding CT errors
+      check: () => typeof error === "object",
+      result: { error: error.message, stack: error },
+    },
+  ];
+
+  for (const condition of conditions) {
+    if (condition.check()) {
+      return condition.result;
+    }
+  }
+
+  return { error };
+};
