@@ -35,6 +35,7 @@ export function generateToken(
   return sign(user, signingKey, {
     ...options,
     algorithm: "RS256",
+    allowInsecureKeySizes: true,
   });
 }
 

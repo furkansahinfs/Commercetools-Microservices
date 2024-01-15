@@ -44,14 +44,14 @@ export class UpdateCartDTO {
 
   @ValidateIf(
     (o) =>
-      o.actionType === CartActions.CHANGEQUANTITY ||
-      o.actionType === CartActions.REMOVE,
+      o.actionType === CartActions.CHANGE_LINE_ITEM_QUANTITY ||
+      o.actionType === CartActions.REMOVE_LINE_ITEM,
   )
   @IsNotEmpty()
   @IsString()
   lineItemId: string;
 
-  @ValidateIf((o) => o.actionType === CartActions.ADD)
+  @ValidateIf((o) => o.actionType === CartActions.ADD_LINE_ITEM)
   @IsNotEmpty()
   @IsString()
   lineItemSKU: string;
@@ -59,7 +59,7 @@ export class UpdateCartDTO {
   @IsOptional()
   cartId: string;
 
-  @ValidateIf((o) => o.actionType === CartActions.CHANGEQUANTITY)
+  @ValidateIf((o) => o.actionType === CartActions.CHANGE_LINE_ITEM_QUANTITY)
   @IsNotEmpty()
   @IsNumber()
   quantity: number;
@@ -75,7 +75,7 @@ export class UpdateCartDTO {
   @ValidateIf(
     (o) =>
       o.actionType === CartActions.ADD_DISCOUNT_CODE ||
-      o.actionType === CartActions.REMOVE,
+      o.actionType === CartActions.REMOVE_DISCOUNT_CODE,
   )
   @IsNotEmpty()
   @IsString()

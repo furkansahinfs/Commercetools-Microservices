@@ -85,13 +85,13 @@ export class CTCartService extends CTService {
     let action: CartUpdateAction = null;
 
     switch (actionType) {
-      case CartActions.ADD:
+      case CartActions.ADD_LINE_ITEM:
         action = generateAddLineItemAction(lineItemSKU);
         break;
-      case CartActions.REMOVE:
+      case CartActions.REMOVE_LINE_ITEM:
         action = generateRemoveLineItemAction(lineItemId);
         break;
-      case CartActions.CHANGEQUANTITY:
+      case CartActions.CHANGE_LINE_ITEM_QUANTITY:
         action = generateChangeineItemQuantityAction(lineItemId, quantity);
         break;
       case CartActions.SET_SHIPPING_ADDRESS:

@@ -1,8 +1,6 @@
 # FASHION CT Project With Gateway and Microservices
 
 ## Notes
-
-- **yarn** instead of _npm_ is strongly recommended.
 - following **eslint rules** is required.
 
 ## Highlighted Technologies
