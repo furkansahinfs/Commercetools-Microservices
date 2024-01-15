@@ -3,6 +3,7 @@ import {
   CartDraft,
   CartUpdate,
   CartUpdateAction,
+  DiscountCode,
 } from "@commercetools/platform-sdk";
 import { ICTCartSDK } from "./ct.cart.sdk.interface";
 import { CTApiRoot } from "../CTApiRoot";
@@ -37,6 +38,7 @@ export class CTCartSDK implements ICTCartSDK {
       limit: 1,
       offset: 0,
     });
+
     return cartByCustomerIdResponse.body.results[0] ?? undefined;
   }
 
@@ -55,6 +57,16 @@ export class CTCartSDK implements ICTCartSDK {
       .withId({ ID: cartId })
       .post({ body: actionBody })
       .execute();
+  }
+
+  async getDiscount(discountCode: string): Promise<DiscountCode> {
+    const discountResponse = await CTApiRoot.discountCodes()
+      .get({
+        queryArgs: { where: `code="${discountCode}"` },
+      })
+      .execute();
+
+    return discountResponse.body?.results?.[0];
   }
 
   private async getCartVersion(cartId: string): Promise<number> {

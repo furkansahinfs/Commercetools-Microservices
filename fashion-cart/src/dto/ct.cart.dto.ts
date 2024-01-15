@@ -60,6 +60,14 @@ export class UpdateCartDTO {
   @IsNotEmpty()
   address: AddressDraft;
 
+  @ValidateIf(
+    (o) =>
+      o.actionType === CartActions.ADD_DISCOUNT_CODE ||
+      o.actionType === CartActions.REMOVE,
+  )
+  @IsNotEmpty()
+  discountCode: string;
+
   getType() {
     return UpdateCartDTO;
   }
