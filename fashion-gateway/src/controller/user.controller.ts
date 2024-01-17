@@ -6,11 +6,11 @@ import { RolesGuard } from "src/middleware";
 import { Roles } from "src/util";
 import { ROLES } from "src/enums";
 
-@Controller()
+@Controller("users")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get("/users")
+  @Get()
   @Roles(ROLES.ADMIN)
   @UseGuards(RolesGuard)
   async getUsers(

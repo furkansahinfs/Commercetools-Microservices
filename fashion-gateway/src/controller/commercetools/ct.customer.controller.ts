@@ -9,32 +9,32 @@ import {
 } from "@nestjs/common";
 import { CTCustomerService } from "src/services";
 
-@Controller()
+@Controller("customers")
 export class CTCustomerController {
   constructor(private readonly ctCustomerService: CTCustomerService) {}
 
-  @Get("/ct/customers/me")
+  @Get("/me")
   async getMe(@Query() dto) {
     return this.ctCustomerService.me(dto);
   }
 
-  @Get("/ct/customers")
+  @Get()
   async getCustomers(@Query() dto) {
     return this.ctCustomerService.getCustomers(dto);
   }
 
-  @Post("/ct/customers")
+  @Post()
   async createCustomer(@Body() dto) {
     return this.ctCustomerService.createCustomer(dto);
   }
 
-  @Patch("/ct/customers")
-  async updateCart(@Body() dto) {
+  @Patch()
+  async updateCustomer(@Body() dto) {
     return this.ctCustomerService.updateCustomer(dto);
   }
 
-  @Delete("/ct/customers")
-  async deleteCart(@Query() dto) {
+  @Delete()
+  async deleteCustomer(@Query() dto) {
     return this.ctCustomerService.deleteCustomer(dto);
   }
 }

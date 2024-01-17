@@ -1,11 +1,11 @@
 import { Controller, Get, Query } from "@nestjs/common";
 import { CTProductService } from "src/services";
 
-@Controller()
+@Controller("products")
 export class CTProductController {
   constructor(private readonly ctProductService: CTProductService) {}
 
-  @Get("/ct/products")
+  @Get()
   async getProducts(@Query() dto) {
     return this.ctProductService.getProducts(dto);
   }

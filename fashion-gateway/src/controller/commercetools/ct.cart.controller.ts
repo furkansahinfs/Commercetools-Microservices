@@ -9,31 +9,31 @@ import {
 } from "@nestjs/common";
 import { CTCartService } from "src/services";
 
-@Controller()
+@Controller("carts")
 export class CTCartController {
   constructor(private readonly ctCartService: CTCartService) {}
 
-  @Post("/ct/carts")
+  @Post()
   async createCart(@Query() dto) {
     return this.ctCartService.createCart(dto);
   }
 
-  @Get("/ct/carts")
+  @Get()
   async getCarts(@Query() dto) {
     return this.ctCartService.getCarts(dto);
   }
 
-  @Get("/ct/carts/me")
+  @Get("/me")
   async getMyCarts(@Query() dto) {
     return this.ctCartService.getMyCarts(dto);
   }
 
-  @Patch("/ct/carts")
+  @Patch()
   async updateCart(@Body() dto) {
     return this.ctCartService.updateCart(dto);
   }
 
-  @Delete("/ct/carts")
+  @Delete()
   async deleteCart(@Query() dto) {
     return this.ctCartService.deleteCart(dto);
   }

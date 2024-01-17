@@ -4,11 +4,11 @@ import { LoginDTO, RegisterDTO, RefreshTokenDTO } from "src/dto";
 import { Request, Response } from "express";
 import { GrantyTypes } from "src/enums";
 
-@Controller()
+@Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post("/auth/login")
+  @Post("/login")
   async login(
     @Body() dto: LoginDTO | RefreshTokenDTO,
     @Req() request: Request,
@@ -22,7 +22,7 @@ export class AuthController {
       );
     }
   }
-  @Post("/auth/register")
+  @Post("/register")
   async register(@Body() dto: RegisterDTO) {
     return await this.authService.register(dto);
   }
