@@ -1,29 +1,16 @@
-import { Body, Controller, Post, Req, Res } from "@nestjs/common";
-import { AuthService } from "../services/auth.service.js";
-import { LoginDTO, RegisterDTO, RefreshTokenDTO } from "src/dto";
-import { Request, Response } from "express";
-import { GrantyTypes } from "src/enums";
+import { Body, Controller, Post } from "@nestjs/common";
+import { AuthService } from "src/services";
 
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("/login")
-  async login(
-    @Body() dto: LoginDTO | RefreshTokenDTO,
-    @Req() request: Request,
-  ) {
-    if (dto.granty_type === GrantyTypes.PASSWORD) {
-      return await this.authService.login(dto as LoginDTO);
-    } else {
-      return await this.authService.refreshToken(
-        dto as RefreshTokenDTO,
-        request,
-      );
-    }
+  async login(@Body() dto) {
+    return await this.authService.login(dto);
   }
   @Post("/register")
-  async register(@Body() dto: RegisterDTO) {
+  async register(@Body() dto) {
     return await this.authService.register(dto);
   }
 }

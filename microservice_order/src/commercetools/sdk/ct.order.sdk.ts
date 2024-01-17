@@ -28,14 +28,14 @@ export class CTOrderSDK implements ICTOrderSDK {
   }
 
   async findCartById(cartId: string, customerId: string) {
-    const where = `customerId="${customerId}"`;
-    return await CTApiRoot.carts()
-      .withId({ ID: cartId })
+    const where = `id="${cartId}" and customerId="${customerId}"`;
+    const cartResponse = await CTApiRoot.carts()
       .get({
         queryArgs: {
           where,
         },
       })
       .execute();
+    return cartResponse.body.results?.[0] ?? undefined;
   }
 }

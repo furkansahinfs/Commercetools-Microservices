@@ -21,7 +21,7 @@ export class CTCustomerService {
       transport: Transport.TCP,
       options: {
         host,
-        port: parseInt(conf.CT_CUSTOMER_CLIENT_PORT),
+        port: parseInt(conf.CUSTOMER_CLIENT_PORT),
       },
     });
   }

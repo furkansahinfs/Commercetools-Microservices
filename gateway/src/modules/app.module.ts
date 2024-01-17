@@ -13,17 +13,16 @@ import {
   CTCustomerService,
   CTOrderService,
   CTProductService,
-  UserService,
 } from "src/services";
-import { PrismaService } from "src/services/prisma.service";
 import * as path from "path";
 import { AcceptLanguageResolver, I18nModule } from "nestjs-i18n";
 import { JWTMiddleware, ResponseStatusInterceptor } from "src/middleware";
-import { UserRepository } from "src/repository/user.repository";
 import { APP_INTERCEPTOR } from "@nestjs/core";
+import { HttpModule } from "@nestjs/axios";
 
 @Module({
   imports: [
+    HttpModule,
     I18nModule.forRoot({
       fallbackLanguage: "en",
       loaderOptions: {
@@ -42,14 +41,11 @@ import { APP_INTERCEPTOR } from "@nestjs/core";
     CTProductController,
   ],
   providers: [
-    PrismaService,
     AuthService,
-    UserService,
     CTCartService,
     CTCustomerService,
     CTOrderService,
     CTProductService,
-    UserRepository,
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseStatusInterceptor,
@@ -60,7 +56,7 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(JWTMiddleware)
-      .exclude("/auth/login", "/auth/register", "/ct/products")
+      .exclude("/auth/login", "/auth/register", "/products", "/customers/new")
       .forRoutes("/");
   }
 }

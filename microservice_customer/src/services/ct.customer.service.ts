@@ -72,7 +72,7 @@ export class CTCustomerService extends CTService {
 
     return await this.CTCustomerSDK.createCustomer(customerDraft)
       .then(({ body }) =>
-        ResponseBody().status(HttpStatus.OK).data(body).build(),
+        ResponseBody().status(HttpStatus.CREATED).data(body).build(),
       )
       .catch((error) =>
         ResponseBody()
@@ -85,9 +85,9 @@ export class CTCustomerService extends CTService {
   async updateCustomer(dto: UpdateCustomerDTO) {
     switch (dto.actionType) {
       case CustomerActions.SET_SHIPPING_ADDRESS:
-        return await this.setAddress(dto.actionData, "SHIPPING", true);
+        return await this.setAddress(dto.address, "SHIPPING", true);
       case CustomerActions.SET_BILLING_ADDRESS:
-        return await this.setAddress(dto.actionData, "BILLING", true);
+        return await this.setAddress(dto.address, "BILLING", true);
       default:
         break;
     }

@@ -21,7 +21,7 @@ export class CTCartService {
       transport: Transport.TCP,
       options: {
         host,
-        port: parseInt(conf.CT_CART_CLIENT_PORT),
+        port: parseInt(conf.CART_CLIENT_PORT),
       },
     });
   }

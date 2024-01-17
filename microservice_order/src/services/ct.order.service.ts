@@ -88,8 +88,8 @@ export class CTOrderService extends CTService {
         this.customerId,
       );
 
-      if (existingCart.body?.id) {
-        return await this.CTOrderSDK.createOrder(existingCart.body)
+      if (existingCart?.id) {
+        return await this.CTOrderSDK.createOrder(existingCart)
           .then(({ body }) =>
             ResponseBody().status(HttpStatus.OK).data(body).build(),
           )
@@ -100,6 +100,13 @@ export class CTOrderService extends CTService {
               .build(),
           );
       }
+      return ResponseBody()
+        .status(HttpStatus.NOT_FOUND)
+        .message({
+          error: this.i18n.translate("order.order.cart_not_found"),
+          id: dto.cartId,
+        })
+        .build();
     } catch (error) {
       return ResponseBody()
         .status(error?.statusCode)

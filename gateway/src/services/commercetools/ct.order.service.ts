@@ -20,7 +20,7 @@ export class CTOrderService {
       transport: Transport.TCP,
       options: {
         host,
-        port: parseInt(conf.CT_ORDER_CLIENT_PORT),
+        port: parseInt(conf.ORDER_CLIENT_PORT),
       },
     });
   }

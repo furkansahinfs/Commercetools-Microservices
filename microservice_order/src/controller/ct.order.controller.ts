@@ -26,7 +26,6 @@ export class CTOrderController {
 
   @MessagePattern({ role: "orders", cmd: "post" })
   async createOrder(payload: CreateOrderPayload) {
-    console.log("xxx", payload);
     this.ctOrderService.setCTCustomer(payload.user.ct_customer_id);
     return await this.ctOrderService.createOrder(payload.dto);
   }

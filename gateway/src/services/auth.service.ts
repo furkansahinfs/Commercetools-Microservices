@@ -1,211 +1,74 @@
-import { HttpStatus, Injectable } from "@nestjs/common";
-import { LoginDTO, RefreshTokenDTO, RegisterDTO } from "src/dto";
-import { Request } from "express";
-import { I18nService } from "nestjs-i18n";
-import { GrantyTypes } from "src/enums";
-import { get } from "lodash";
-import {
-  comparePassword,
-  encryptPassword,
-  generateToken,
-  verifyToken,
-  ResponseBody,
-  getJWTUsername,
-  getJWTUserId,
-} from "src/util";
+import { Inject, Injectable, Scope } from "@nestjs/common";
 import { conf } from "src/config";
-import { lastValueFrom } from "rxjs";
-import { User } from "src/types";
-import { CTCustomerService } from "./commercetools";
-import { UserRepository } from "src/repository";
+import { HttpService } from "@nestjs/axios";
+import { Request } from "express";
+import { REQUEST } from "@nestjs/core";
+import { AxiosRequestConfig } from "axios";
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class AuthService {
+  private host = "";
+  private port = 0;
+
   constructor(
-    private userRepository: UserRepository,
-    private readonly i18n: I18nService,
-    private ctCustomerService: CTCustomerService,
-  ) {}
-
-  async login(dto: LoginDTO) {
-    const granty_type = dto.granty_type;
-
-    if (granty_type === GrantyTypes.PASSWORD) {
-      const email = dto.email;
-      const password = dto.password;
-      const user = await this.userRepository.findByUsername(email);
-
-      if (user) {
-        return await this.authenticateUserByPassword(email, password);
-      } else {
-        return ResponseBody()
-          .status(HttpStatus.BAD_REQUEST)
-          .message({ error: this.i18n.translate("auth.user_not_found") })
-          .build();
-      }
-    }
-
-    return ResponseBody()
-      .status(HttpStatus.BAD_REQUEST)
-      .message({ error: this.i18n.translate("auth.invalid_granty_type") })
-      .build();
+    private readonly httpService: HttpService,
+    @Inject(REQUEST) private readonly request: Request,
+  ) {
+    this.host = conf.CLIENT_HOST;
+    this.port = parseInt(conf.AUTH_PORT);
   }
 
-  async refreshToken(dto: RefreshTokenDTO, request: Request) {
-    const granty_type = dto.granty_type;
-    if (granty_type === GrantyTypes.REFRESH) {
-      return this.authenticateUserByRefreshToken(request);
-    }
+  public async login(dto) {
+    const path = "auth/login";
 
-    return ResponseBody()
-      .status(HttpStatus.BAD_REQUEST)
-      .message({ error: this.i18n.translate("auth.invalid_granty_type") })
-      .build();
+    return this.httpService.axiosRef
+      .post(this.generateEndpoint(path), dto, {
+        headers: {
+          refresh_token: this.request.headers["refresh_token"],
+        },
+      } as AxiosRequestConfig)
+      .then((res) => res.data)
+      .catch((err) => err.response.data);
   }
 
-  async register(dto: RegisterDTO) {
-    const maybeUser = await this.userRepository.findByUsername(dto.email);
-
-    if (maybeUser) {
-      return ResponseBody()
-        .status(HttpStatus.CONFLICT)
-        .message({ error: this.i18n.translate("auth.user_already_exists") })
-        .build();
-    }
-
-    try {
-      const user = await this.createUser(dto);
-      await this.createCommercetoolsCustomer(dto, user.id);
-
-      return ResponseBody().status(HttpStatus.CREATED).data(user).build();
-    } catch (e) {
-      await this.userRepository.deleteUser(dto.email);
-      return ResponseBody()
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .message({ error: e?.message ?? e })
-        .build();
-    }
+  public async register(dto) {
+    const path = "auth/register";
+    return this.httpService.axiosRef
+      .post(this.generateEndpoint(path), dto)
+      .then((res) => res.data)
+      .catch((err) => err.response.data);
   }
 
-  private async createUser(dto: RegisterDTO): Promise<User> {
-    const encryptedPassword: string = await encryptPassword(dto.password);
+  public async users(dto) {
+    const path = "users";
 
-    if (encryptedPassword === "ERROR") {
-      return ResponseBody()
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .message({ error: this.i18n.translate("auth.status.unhandled") })
-        .build();
-    }
-
-    return await this.userRepository.saveUser(dto, encryptedPassword);
+    return this.httpService.axiosRef
+      .get(this.generateEndpoint(path), {
+        params: {
+          ...dto,
+        },
+        headers: { Authorization: this.request.headers.authorization },
+        user: this.request["user"],
+      } as AxiosRequestConfig)
+      .then((res) => res.data.data)
+      .catch((err) => err.response.data);
   }
 
-  private async createCommercetoolsCustomer(dto: RegisterDTO, userId: string) {
-    const ctCustomerPromise = await this.ctCustomerService.createCustomer({
-      ...dto,
-      customerNumber: userId,
-    });
-
-    const ctCustomer = await lastValueFrom(ctCustomerPromise);
-    if (ctCustomer?.message) {
-      throw new Error(ctCustomer.message?.error);
-    }
-
-    await this.userRepository
-      .updateUser(userId, {
-        ct_customer_id: ctCustomer?.data?.customer?.id,
-      })
-      .catch((err) => {
-        throw new Error(err);
-      });
+  public async getMe(dto) {
+    const path = "users/me";
+    return this.httpService.axiosRef
+      .get(this.generateEndpoint(path), {
+        params: {
+          ...dto,
+        },
+        headers: { Authorization: this.request.headers.authorization },
+        user: this.request["user"],
+      } as AxiosRequestConfig)
+      .then((res) => res.data.data)
+      .catch((err) => err.response.data);
   }
 
-  private async authenticateUserByPassword(email: string, password: string) {
-    const maybeUser = await this.userRepository.findByUsername(email, {
-      password: true,
-    });
-    if (!maybeUser) {
-      return ResponseBody()
-        .status(HttpStatus.NOT_FOUND)
-        .message({ error: this.i18n.translate("auth.user_not_found") })
-        .build();
-    }
-
-    if (await comparePassword(password, maybeUser.password)) {
-      await this.userRepository.updateUser(maybeUser?.id, {
-        last_logged_in: new Date(Date.now()),
-      });
-
-      return ResponseBody()
-        .status(HttpStatus.OK)
-        .data({
-          access_token: generateToken(
-            { username: email, userId: maybeUser.id },
-            "ACCESS_TOKEN_PRIVATE_KEY",
-            { expiresIn: conf.ACCESS_TOKEN_TIME },
-          ),
-          refresh_token: generateToken(
-            { username: email, userId: maybeUser.id },
-            "REFRESH_TOKEN_PRIVATE_KEY",
-            { expiresIn: conf.REFRESH_TOKEN_TIME },
-          ),
-          role: maybeUser.role,
-        })
-        .build();
-    }
-
-    return ResponseBody()
-      .status(HttpStatus.UNAUTHORIZED)
-      .message({ error: this.i18n.translate("auth.login_failed") })
-      .build();
-  }
-
-  private async authenticateUserByRefreshToken(request: Request) {
-    const refreshToken = get(request, "headers.refresh-token");
-    const newTokens: false | { access_token: string; refresh_token: string } =
-      await this.refreshAllTokens({ refreshToken: refreshToken as string });
-
-    if (newTokens === false) {
-      return ResponseBody()
-        .status(HttpStatus.NOT_FOUND)
-        .message({ error: this.i18n.translate("auth.user_not_found") })
-        .build();
-    }
-
-    return ResponseBody().status(HttpStatus.OK).data(newTokens).build();
-  }
-
-  private async refreshAllTokens({ refreshToken }: { refreshToken: string }) {
-    try {
-      const { decoded } = verifyToken(refreshToken, "REFRESH_TOKEN_PUBLIC_KEY");
-      if (!decoded) {
-        return false;
-      }
-      const username = await getJWTUsername(
-        refreshToken,
-        "REFRESH_TOKEN_PUBLIC_KEY",
-      );
-      const userId = await getJWTUserId(
-        refreshToken,
-        "REFRESH_TOKEN_PUBLIC_KEY",
-      );
-      if (!username || !userId) {
-        return false;
-      }
-      const newAccessToken = generateToken(
-        { username, userId: userId },
-        "ACCESS_TOKEN_PRIVATE_KEY",
-        { expiresIn: conf.ACCESS_TOKEN_TIME },
-      );
-      const newRefreshToken = generateToken(
-        { username, userId: userId },
-        "REFRESH_TOKEN_PRIVATE_KEY",
-        { expiresIn: conf.REFRESH_TOKEN_TIME },
-      );
-      return { access_token: newAccessToken, refresh_token: newRefreshToken };
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
+  private generateEndpoint(path: string) {
+    return `http://${this.host}:${this.port}/${path}`;
   }
 }

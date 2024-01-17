@@ -23,7 +23,7 @@ export class CTCustomerController {
     return this.ctCustomerService.getCustomers(dto);
   }
 
-  @Post()
+  @Post("/new")
   async createCustomer(@Body() dto) {
     return this.ctCustomerService.createCustomer(dto);
   }

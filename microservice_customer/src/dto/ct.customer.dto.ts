@@ -70,7 +70,7 @@ export class UpdateCustomerDTO {
   actionType: string;
 
   @IsNotEmpty()
-  actionData: any;
+  address: any;
 
   @IsOptional()
   @IsString()

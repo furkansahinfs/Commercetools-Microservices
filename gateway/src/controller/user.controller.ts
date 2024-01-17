@@ -1,22 +1,17 @@
-import { Controller, Get, Query, Res, UseGuards } from "@nestjs/common";
-import { GetUsersFilterDTO } from "src/dto";
-import { Response } from "express";
-import { UserService } from "src/services";
-import { RolesGuard } from "src/middleware";
-import { Roles } from "src/util";
-import { ROLES } from "src/enums";
+import { Controller, Get, Query } from "@nestjs/common";
+import { AuthService } from "src/services";
 
 @Controller("users")
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: AuthService) {}
 
   @Get()
-  @Roles(ROLES.ADMIN)
-  @UseGuards(RolesGuard)
-  async getUsers(
-    @Query() filter: GetUsersFilterDTO,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    res["promise"](await this.userService.getUsers(filter));
+  async getUsers(@Query() filter) {
+    return await this.userService.users(filter);
+  }
+
+  @Get("/me")
+  async getMe(@Query() filter) {
+    return await this.userService.getMe(filter);
   }
 }

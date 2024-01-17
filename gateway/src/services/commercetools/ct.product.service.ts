@@ -16,7 +16,7 @@ export class CTProductService {
       transport: Transport.TCP,
       options: {
         host,
-        port: parseInt(conf.CT_PRODUCT_CLIENT_PORT),
+        port: parseInt(conf.PRODUCT_CLIENT_PORT),
       },
     });
   }

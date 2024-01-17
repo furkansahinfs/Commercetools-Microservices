@@ -1,4 +1,4 @@
-import { sign, SignOptions, verify } from "jsonwebtoken";
+import { verify } from "jsonwebtoken";
 import { conf } from "src/config";
 
 export const verifyToken = (
@@ -24,20 +24,6 @@ export const verifyToken = (
     };
   }
 };
-
-export function generateToken(
-  user: { username: string; userId: string },
-  keyName: "ACCESS_TOKEN_PRIVATE_KEY" | "REFRESH_TOKEN_PRIVATE_KEY",
-  options?: SignOptions | undefined,
-) {
-  const signingKey = Buffer.from(conf[keyName], "base64").toString("ascii");
-
-  return sign(user, signingKey, {
-    ...options,
-    algorithm: "RS256",
-    allowInsecureKeySizes: true,
-  });
-}
 
 export function getJWTUsername(
   token: string,
