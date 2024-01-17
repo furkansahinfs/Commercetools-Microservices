@@ -39,7 +39,7 @@ export class GetOrdersFilterPayload extends Payload<GetOrdersFilterDTO> {
 export class CreateOrderDTO {
   @IsNotEmpty()
   @IsString()
-  cartId?: string;
+  cartId: string;
 }
 
 export class CreateOrderPayload extends Payload<CreateOrderDTO> {

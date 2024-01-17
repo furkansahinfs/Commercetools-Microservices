@@ -10,12 +10,12 @@ import { Type } from "class-transformer";
 import { User } from "src/types";
 
 export class GetProductsFilterDTO {
-  @ValidateIf((o) => !o.productId)
+  @ValidateIf((o) => !o.productIds)
   @IsNotEmpty()
   @IsNumberString()
   limit: string;
 
-  @ValidateIf((o) => !o.productId)
+  @ValidateIf((o) => !o.productIds)
   @IsNotEmpty()
   @IsNumberString()
   offset: string;

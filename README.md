@@ -1,4 +1,4 @@
-# FASHION CT Project With Gateway and Microservices
+# Commercetools Project With Gateway and Microservices
 
 ## Notes
 - following **eslint rules** is required.
