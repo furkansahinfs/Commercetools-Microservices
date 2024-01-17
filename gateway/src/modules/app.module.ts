@@ -9,7 +9,7 @@ import {
   CustomerModule,
   OrderModule,
   ProductModule,
-} from "./services";
+} from "./subModules";
 import { AuthService } from "src/services";
 import { HttpModule } from "@nestjs/axios";
 import { ClientsModule } from "@nestjs/microservices";
