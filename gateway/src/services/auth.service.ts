@@ -50,7 +50,7 @@ export class AuthService {
         headers: { Authorization: this.request.headers.authorization },
         user: this.request["user"],
       } as AxiosRequestConfig)
-      .then((res) => res.data.data)
+      .then((res) => res.data)
       .catch((err) => err.response.data);
   }
 
@@ -64,7 +64,7 @@ export class AuthService {
         headers: { Authorization: this.request.headers.authorization },
         user: this.request["user"],
       } as AxiosRequestConfig)
-      .then((res) => res.data.data)
+      .then((res) => res.data)
       .catch((err) => err.response.data);
   }
 
