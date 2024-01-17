@@ -9,6 +9,8 @@ import {
 } from "@nestjs/common";
 import { CTCustomerService } from "src/services";
 
+/** DTO validated in services */
+
 @Controller("customers")
 export class CTCustomerController {
   constructor(private readonly ctCustomerService: CTCustomerService) {}

@@ -1,25 +1,12 @@
-import { Injectable, Scope } from "@nestjs/common";
-import {
-  ClientProxy,
-  ClientProxyFactory,
-  Transport,
-} from "@nestjs/microservices";
-import { conf } from "src/config";
+import { Inject, Injectable, Scope } from "@nestjs/common";
+import { ClientProxy } from "@nestjs/microservices";
 
 @Injectable({ scope: Scope.REQUEST })
 export class CTProductService {
-  private ctProductClient: ClientProxy;
-
-  constructor() {
-    const host = conf.CLIENT_HOST;
-    this.ctProductClient = ClientProxyFactory.create({
-      transport: Transport.TCP,
-      options: {
-        host,
-        port: parseInt(conf.PRODUCT_CLIENT_PORT),
-      },
-    });
-  }
+  constructor(
+    @Inject("MICROSERVICE_PRODUCT")
+    private readonly ctProductClient: ClientProxy,
+  ) {}
 
   public getProducts(dto) {
     return this.ctProductClient.send({ role: "products", cmd: "get" }, { dto });

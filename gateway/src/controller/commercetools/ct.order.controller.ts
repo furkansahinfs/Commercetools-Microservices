@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { CTOrderService } from "src/services";
 
+/** DTO validated in services */
+
 @Controller("orders")
 export class CTOrderController {
   constructor(private readonly ctOrderService: CTOrderService) {}

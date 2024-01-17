@@ -1,6 +1,8 @@
 import { Controller, Get, Query } from "@nestjs/common";
 import { AuthService } from "src/services";
 
+/** DTO validated in services */
+
 @Controller("users")
 export class UserController {
   constructor(private readonly userService: AuthService) {}
