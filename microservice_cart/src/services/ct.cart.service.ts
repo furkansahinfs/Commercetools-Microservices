@@ -76,10 +76,8 @@ export class CTCartService extends CTService {
     } = dto;
     let cartId = dto.cartId;
     if (!cartId) {
-      const cart: Cart | undefined = await this.getCustomerActiveCart(
-        this.customerId,
-      );
-      cartId = cart?.id;
+      const cart: IResponse = await this.getCustomerActiveCart(this.customerId);
+      cartId = cart?.data?.id;
     }
     const actions: CartUpdateAction[] = [];
     let action: CartUpdateAction = null;
