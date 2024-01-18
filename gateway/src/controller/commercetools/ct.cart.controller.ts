@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Patch,
-  Post,
-  Query,
-} from "@nestjs/common";
+import { Body, Controller, Delete, Get, Post, Query } from "@nestjs/common";
 import { CTCartService } from "src/services";
 
 /** DTO validated in services */
@@ -30,7 +22,7 @@ export class CTCartController {
     return this.ctCartService.getMyCarts(dto);
   }
 
-  @Patch()
+  @Post("/action")
   async updateCart(@Body() dto) {
     return this.ctCartService.updateCart(dto);
   }

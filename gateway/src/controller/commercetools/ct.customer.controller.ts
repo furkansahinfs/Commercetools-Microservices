@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Patch,
-  Post,
-  Query,
-} from "@nestjs/common";
+import { Body, Controller, Delete, Get, Post, Query } from "@nestjs/common";
 import { CTCustomerService } from "src/services";
 
 /** DTO validated in services */
@@ -30,7 +22,7 @@ export class CTCustomerController {
     return this.ctCustomerService.createCustomer(dto);
   }
 
-  @Patch()
+  @Post("/action")
   async updateCustomer(@Body() dto) {
     return this.ctCustomerService.updateCustomer(dto);
   }

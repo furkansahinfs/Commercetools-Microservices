@@ -13,7 +13,7 @@ export class UserController {
   }
 
   @Get("/me")
-  async getMe(@Query() filter) {
-    return await this.userService.getMe(filter);
+  async getMe() {
+    return await this.userService.getMe();
   }
 }

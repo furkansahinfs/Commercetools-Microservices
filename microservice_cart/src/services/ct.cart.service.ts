@@ -76,7 +76,7 @@ export class CTCartService extends CTService {
     } = dto;
     let cartId = dto.cartId;
     if (!cartId) {
-      const cart: IResponse = await this.getCustomerActiveCart(this.customerId);
+      const cart: IResponse = await this.getCustomerActiveCart();
       cartId = cart?.data?.id;
     }
     const actions: CartUpdateAction[] = [];
@@ -113,8 +113,8 @@ export class CTCartService extends CTService {
     return await this.updateCartWithActions(actions, cartId);
   }
 
-  async getCustomerActiveCart(customerId: string) {
-    const where = `customerId="${customerId}" and cartState = "Active"`;
+  async getCustomerActiveCart() {
+    const where = `customerId="${this.customerId}" and cartState = "Active"`;
     const cartQueryResponse = await this.CTCartSDK.findCarts({
       where,
       limit: undefined,
@@ -129,7 +129,7 @@ export class CTCartService extends CTService {
 
     const cartDraft: CartDraft = {
       currency: "USD",
-      customerId: customerId,
+      customerId: this.customerId,
       lineItems: [],
     };
     return await this.CTCartSDK.createCart(cartDraft)

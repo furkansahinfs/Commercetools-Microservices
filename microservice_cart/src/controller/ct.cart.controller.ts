@@ -26,9 +26,7 @@ export class CTCartController {
   @UseGuards(RolesGuard)
   async getMyActiveCart(payload: GetCartFilterPayload) {
     this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
-    return await this.ctCartService.getCustomerActiveCart(
-      payload.user.ct_customer_id,
-    );
+    return await this.ctCartService.getCustomerActiveCart();
   }
 
   @MessagePattern({ role: "carts", cmd: "post" })
@@ -37,7 +35,7 @@ export class CTCartController {
     return await this.ctCartService.createCart(payload.dto);
   }
 
-  @MessagePattern({ role: "carts", cmd: "patch" })
+  @MessagePattern({ role: "carts/action", cmd: "post" })
   async updateCart(payload: UpdateCartPayload) {
     this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
     return await this.ctCartService.updateCart(payload.dto);
