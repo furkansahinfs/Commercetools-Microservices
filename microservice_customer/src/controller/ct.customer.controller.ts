@@ -33,7 +33,7 @@ export class CTCustomerController {
     return await this.ctCustomerService.createCustomer(payload.dto);
   }
 
-  @MessagePattern({ role: "customers", cmd: "patch" })
+  @MessagePattern({ role: "customers/action", cmd: "post" })
   async update(payload: UpdateCustomerPayload) {
     this.ctCustomerService.setCTCustomer(payload.user?.ct_customer_id);
     return await this.ctCustomerService.updateCustomer(payload.dto);

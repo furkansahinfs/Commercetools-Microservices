@@ -30,7 +30,7 @@ export class CTCustomerService {
 
   public async updateCustomer(dto) {
     return this.ctCustomerClient.send(
-      { role: "customers", cmd: "patch" },
+      { role: "customers/action", cmd: "post" },
       { dto, user: this.authenticatedUser },
     );
   }

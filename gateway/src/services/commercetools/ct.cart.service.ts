@@ -36,7 +36,7 @@ export class CTCartService {
 
   public async updateCart(dto) {
     return this.ctCartClient.send(
-      { role: "carts", cmd: "patch" },
+      { role: "carts/action", cmd: "post" },
       { dto, user: this.authenticatedUser },
     );
   }
