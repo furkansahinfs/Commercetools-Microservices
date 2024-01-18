@@ -22,7 +22,7 @@ export class CTCartController {
     return await this.ctCartService.getCarts({ cartId: payload.dto.cartId });
   }
 
-  @MessagePattern({ role: "carts", cmd: "get-me" })
+  @MessagePattern({ role: "carts/me", cmd: "get" })
   @UseGuards(RolesGuard)
   async getMyActiveCart(payload: GetCartFilterPayload) {
     this.ctCartService.setCTCustomer(payload.user.ct_customer_id);

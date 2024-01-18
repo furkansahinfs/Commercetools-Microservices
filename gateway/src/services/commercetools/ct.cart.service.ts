@@ -29,7 +29,7 @@ export class CTCartService {
 
   public async getMyCarts(dto) {
     return this.ctCartClient.send(
-      { role: "carts", cmd: "get-me" },
+      { role: "carts/me", cmd: "get" },
       { dto, user: this.authenticatedUser },
     );
   }
