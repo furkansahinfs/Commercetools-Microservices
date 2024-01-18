@@ -5,10 +5,11 @@ export class CTService {
     this.customerId = customerId;
   }
 
-  protected createWhereStringForInPredicate(predicateStringArr: string[]) {
-    const predicateStringsWithQuote =
-      '"' + predicateStringArr.join('", "') + '"';
+  public getLimit(limit?: string): number | undefined {
+    return limit ? parseInt(limit) : undefined;
+  }
 
-    return predicateStringsWithQuote;
+  public getOffset(offset?: string): number | undefined {
+    return offset ? parseInt(offset) : undefined;
   }
 }

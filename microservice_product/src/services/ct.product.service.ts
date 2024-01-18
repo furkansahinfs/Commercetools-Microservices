@@ -5,11 +5,13 @@ import { ResponseBody } from "src/util";
 import { CTProductSDK } from "src/commercetools";
 import { generateWhereIdString } from "./utils";
 import { IResponse } from "src/types";
+import { CTService } from "./ct.service";
 
 @Injectable()
-export class CTProductService {
+export class CTProductService extends CTService {
   CTProductSDK: CTProductSDK;
   constructor(private readonly i18n: I18nService) {
+    super();
     this.CTProductSDK = new CTProductSDK();
   }
 
@@ -18,13 +20,11 @@ export class CTProductService {
       ? generateWhereIdString(dto.productIds)
       : undefined;
 
-    const limit: number | undefined = dto?.limit
-      ? parseInt(dto.limit)
-      : undefined;
-
-    const offset: number | undefined = dto?.offset && parseInt(dto.offset);
-
-    return await this.CTProductSDK.findProducts({ where, limit, offset })
+    return await this.CTProductSDK.findProducts({
+      where,
+      limit: this.getLimit(dto?.limit),
+      offset: this.getOffset(dto?.offset),
+    })
       .then(({ body }) =>
         ResponseBody()
           .status(HttpStatus.OK)

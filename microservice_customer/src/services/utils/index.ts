@@ -1,0 +1,1 @@
+export { getWhereString } from "./generateWhereString";

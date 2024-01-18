@@ -18,6 +18,7 @@ import { CTService } from "./ct.service";
 import { CustomerActions } from "src/enums/customerAction.enum";
 import { CTCustomerSDK } from "src/commercetools";
 import { IResponse } from "src/types";
+import { getWhereString } from "./utils";
 
 @Injectable()
 export class CTCustomerService extends CTService {
@@ -29,15 +30,15 @@ export class CTCustomerService extends CTService {
 
   async getCustomers(dto: GetCustomersFilterDTO): Promise<IResponse> {
     const where = dto?.customerId
-      ? this.getWhereString({ customerIdParam: dto.customerId })
+      ? getWhereString({ customerIdParam: dto.customerId })
       : dto?.customerNumber
-      ? this.getWhereString({ customerNumberParam: dto.customerNumber })
+      ? getWhereString({ customerNumberParam: dto.customerNumber })
       : undefined;
 
     return await this.CTCustomerSDK.findCustomers({
       where,
-      limit: undefined,
-      offset: undefined,
+      limit: this.getLimit(dto?.limit),
+      offset: this.getOffset(dto?.offset),
     })
       .then(({ body }) =>
         ResponseBody()
@@ -125,10 +126,20 @@ export class CTCustomerService extends CTService {
       return updatedCustomer;
     }
 
+    return await this.overrideDefaultAddress(
+      updatedCustomer.addresses?.[0]?.id,
+      type,
+    );
+  }
+
+  private async overrideDefaultAddress(
+    addressId: string,
+    type: "SHIPPING" | "BILLING",
+  ) {
     const setDefaultAddressAction:
       | CustomerSetDefaultShippingAddressAction
       | CustomerSetDefaultBillingAddressAction = {
-      addressId: updatedCustomer.addresses?.[0]?.id,
+      addressId,
       action:
         type === "SHIPPING"
           ? "setDefaultShippingAddress"
@@ -147,30 +158,5 @@ export class CTCustomerService extends CTService {
           .message({ error: error?.body?.message })
           .build(),
       );
-  }
-
-  private getWhereString(whereParams: {
-    customerIdParam?: string;
-    customerNumberParam?: string;
-  }) {
-    const { customerIdParam, customerNumberParam } = whereParams;
-
-    if (customerIdParam) {
-      const predicateIds = customerIdParam.split(",");
-      return predicateIds?.length > 1
-        ? `id in (${this.createWhereStringForInPredicate(predicateIds)})`
-        : `id="${customerIdParam}"`;
-    }
-
-    if (customerNumberParam) {
-      const predicateCustomerNumbers = customerNumberParam.split(",");
-      return predicateCustomerNumbers?.length > 1
-        ? `customerNumber in (${this.createWhereStringForInPredicate(
-            predicateCustomerNumbers,
-          )})`
-        : `customerNumber="${customerIdParam}"`;
-    }
-
-    return undefined;
   }
 }
