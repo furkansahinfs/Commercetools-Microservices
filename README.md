@@ -18,26 +18,29 @@
 - nodemailer
 - rxjs
 - uuid
-- zod
 
-## Project All Folder Hierarchy
+## Project Wide Folder Hierarchy
 
     .
     ├── public             
     └── src
       ├── commercetools
+      ├── config
       ├── controller
       ├── db
       ├── dto
       ├── enums
       ├── error
       ├── i18n
+      ├── interface
       ├── middleware
       ├── modules
       ├── prisma
+      ├── repository
       ├── services
-      ├── util
       ├── types
+      ├── util
+    
 
 ## Naming Convention
 will be added.

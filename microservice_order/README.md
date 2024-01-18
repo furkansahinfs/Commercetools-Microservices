@@ -1,23 +1,19 @@
-# FASHION CT Order Microservice
+# Commercetools Microservice Project - Order Service
 
 ## Notes
+
 - following **eslint rules** is required.
 
-## Highlighted Technologies
+## Highlighted Technologies in Order Service
 
 - @nestjs
-- bcrypt
 - dotenv
 - jade
-- jsonwebtoken
 - nestjs-i18n
 - class-validator
 - commercetools
 - node-fetch
-- nodemailer
-- rxjs
 - uuid
-- zod
 
 ## Project Folder Hierarchy
 
@@ -33,8 +29,8 @@
       ├── middleware
       ├── modules
       ├── services
-      ├── util
       ├── types
+      ├── util
 
 ## Naming Convention
 

@@ -17,6 +17,7 @@ import { conf } from "src/config";
 import { User } from "src/types";
 import { UserRepository } from "src/repository";
 import { CTCustomerService } from "./ct.customer.service";
+import { getJWTUser } from "src/util/jwt.util";
 
 @Injectable()
 export class AuthService {
@@ -138,12 +139,12 @@ export class AuthService {
         .status(HttpStatus.OK)
         .data({
           access_token: generateToken(
-            { username: email, userId: maybeUser.id },
+            { username: email, userId: maybeUser.id, role: maybeUser.role },
             "ACCESS_TOKEN_PRIVATE_KEY",
             { expiresIn: conf.ACCESS_TOKEN_TIME },
           ),
           refresh_token: generateToken(
-            { username: email, userId: maybeUser.id },
+            { username: email, userId: maybeUser.id, role: maybeUser.role },
             "REFRESH_TOKEN_PRIVATE_KEY",
             { expiresIn: conf.REFRESH_TOKEN_TIME },
           ),
@@ -179,24 +180,26 @@ export class AuthService {
       if (!decoded) {
         return false;
       }
-      const username = await getJWTUsername(
-        refreshToken,
-        "REFRESH_TOKEN_PUBLIC_KEY",
-      );
-      const userId = await getJWTUserId(
-        refreshToken,
-        "REFRESH_TOKEN_PUBLIC_KEY",
-      );
-      if (!username || !userId) {
+      const user = getJWTUser(refreshToken, "REFRESH_TOKEN_PUBLIC_KEY");
+
+      if (!user["username"] || !user["userId"]) {
         return false;
       }
       const newAccessToken = generateToken(
-        { username, userId: userId },
+        {
+          username: user["username"],
+          userId: user["userId"],
+          role: user["role"],
+        },
         "ACCESS_TOKEN_PRIVATE_KEY",
         { expiresIn: conf.ACCESS_TOKEN_TIME },
       );
       const newRefreshToken = generateToken(
-        { username, userId: userId },
+        {
+          username: user["username"],
+          userId: user["userId"],
+          role: user["role"],
+        },
         "REFRESH_TOKEN_PRIVATE_KEY",
         { expiresIn: conf.REFRESH_TOKEN_TIME },
       );

@@ -24,20 +24,25 @@ export const verifyToken = (
     };
   }
 };
-
-export function getJWTUsername(
+export function getJWTUser(
   token: string,
   keyName: "ACCESS_TOKEN_PUBLIC_KEY" | "REFRESH_TOKEN_PUBLIC_KEY",
 ) {
   const signingKey = Buffer.from(conf[keyName], "base64").toString("ascii");
   const user = verify(token, signingKey);
-  return user?.["username"];
+  return user;
+}
+
+export function getJWTUsername(
+  token: string,
+  keyName: "ACCESS_TOKEN_PUBLIC_KEY" | "REFRESH_TOKEN_PUBLIC_KEY",
+) {
+  return getJWTUser(token, keyName)?.["username"];
 }
 
 export function getJWTUserId(
   token: string,
   keyName: "ACCESS_TOKEN_PUBLIC_KEY" | "REFRESH_TOKEN_PUBLIC_KEY",
 ) {
-  const signingKey = Buffer.from(conf[keyName], "base64").toString("ascii");
-  return verify(token, signingKey)["userId"];
+  return getJWTUser(token, keyName)?.["userId"];
 }

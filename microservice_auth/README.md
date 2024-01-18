@@ -1,11 +1,11 @@
-# FASHION CT API Gateway
+# Commercetools Microservice Project - Auth Service
 
 ## Notes
 
 - following **eslint rules** is required.
 - DO NOT FORGET TO RUN "PRISMA GENERATE" !
 
-## Highlighted Technologies
+## Highlighted Technologies in Auth Service
 
 - @nestjs
 - prisma
@@ -19,13 +19,13 @@
 - nodemailer
 - rxjs
 - uuid
-- zod
 
 ## Project Folder Hierarchy
 
     .
     ├── public
     └── src
+      ├── config
       ├── controller
       ├── db
       ├── dto
@@ -35,9 +35,10 @@
       ├── middleware
       ├── modules
       ├── prisma
+      ├── repository
       ├── services
-      ├── util
       ├── types
+      ├── util
 
 ## Naming Convention
 

@@ -1,43 +1,36 @@
-# FASHION CT API Gateway
+# Commercetools Microservice Project - Gateway
 
 ## Notes
 
 - following **eslint rules** is required.
-- DO NOT FORGET TO RUN "PRISMA GENERATE" !
 
-## Highlighted Technologies
+## Highlighted Technologies in Gateway
 
 - @nestjs
-- prisma
 - bcrypt
 - dotenv
 - jade
 - jsonwebtoken
 - nestjs-i18n
-- class-validator
 - node-fetch
-- nodemailer
 - rxjs
 - uuid
-- zod
 
 ## Project Folder Hierarchy
 
     .
     ├── public
     └── src
+      ├── config
       ├── controller
-      ├── db
-      ├── dto
       ├── enums
       ├── error
       ├── i18n
       ├── middleware
       ├── modules
-      ├── prisma
       ├── services
-      ├── util
       ├── types
+      ├── util
 
 ## Naming Convention
 

@@ -1,24 +1,19 @@
-# FASHION CT Customer Microservice
+# Commercetools Microservice Project - Customer Service
 
 ## Notes
 
 - following **eslint rules** is required.
 
-## Highlighted Technologies
+## Highlighted Technologies in Customer Service
 
 - @nestjs
-- bcrypt
 - dotenv
 - jade
-- jsonwebtoken
 - nestjs-i18n
 - class-validator
 - commercetools
 - node-fetch
-- nodemailer
-- rxjs
 - uuid
-- zod
 
 ## Project Folder Hierarchy
 
@@ -34,8 +29,8 @@
       ├── middleware
       ├── modules
       ├── services
-      ├── util
       ├── types
+      ├── util
 
 ## Naming Convention
 
