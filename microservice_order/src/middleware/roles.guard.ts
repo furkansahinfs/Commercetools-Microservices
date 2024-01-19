@@ -15,7 +15,7 @@ export class RolesGuard implements CanActivate {
     return this.matchRoles(roles, role);
   }
 
-  matchRoles(roles: string[], userRole: string) {
+  matchRoles(roles: string[], userRole: string): boolean {
     return roles.some(
       (role) => role === process.env.ROLE_KEY.concat(userRole, ""),
     );

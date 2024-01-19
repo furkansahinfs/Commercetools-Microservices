@@ -1,7 +1,7 @@
 export function generateWhereString(whereParams: {
   orderIdParam?: string;
   orderNumberParam?: string;
-}) {
+}): string {
   const { orderIdParam, orderNumberParam } = whereParams;
 
   if (orderIdParam) {
@@ -23,7 +23,7 @@ export function generateWhereString(whereParams: {
   return undefined;
 }
 
-function createWhereStringForInPredicate(predicateStringArr: string[]) {
+function createWhereStringForInPredicate(predicateStringArr: string[]): string {
   const predicateStringsWithQuote = '"' + predicateStringArr.join('", "') + '"';
 
   return predicateStringsWithQuote;

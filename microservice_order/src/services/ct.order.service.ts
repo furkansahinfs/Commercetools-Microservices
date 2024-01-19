@@ -5,6 +5,8 @@ import { ResponseBody } from "src/util";
 import { CTOrderSDK } from "../commercetools";
 import { CTService } from "./ct.service";
 import { generateWhereString } from "./utils";
+import { IResponse } from "src/types";
+import { Cart, Order } from "@commercetools/platform-sdk";
 
 @Injectable()
 export class CTOrderService extends CTService {
@@ -14,7 +16,9 @@ export class CTOrderService extends CTService {
     this.CTOrderSDK = new CTOrderSDK();
   }
 
-  async getOrders(dto: GetOrdersFilterDTO) {
+  async getOrders(
+    dto: GetOrdersFilterDTO,
+  ): Promise<IResponse<{ total: number; results: Order[] }>> {
     const where = dto?.orderId
       ? generateWhereString({ orderIdParam: dto.orderId })
       : dto?.orderNumber
@@ -43,7 +47,9 @@ export class CTOrderService extends CTService {
       );
   }
 
-  async getMyOrders(dto: GetOrdersFilterDTO) {
+  async getMyOrders(
+    dto: GetOrdersFilterDTO,
+  ): Promise<IResponse<{ total: number; results: Order[] }>> {
     const where = `customerId="${this.customerId}"`;
 
     return await this.CTOrderSDK.findMyOrders({
@@ -68,7 +74,7 @@ export class CTOrderService extends CTService {
       );
   }
 
-  async getOrderWithId(orderId: string) {
+  async getOrderWithId(orderId: string): Promise<IResponse<Order>> {
     return await this.CTOrderSDK.findOrderById(orderId)
       .then(({ body }) =>
         ResponseBody().status(HttpStatus.OK).data(body).build(),
@@ -81,9 +87,9 @@ export class CTOrderService extends CTService {
       );
   }
 
-  async createOrder(dto: CreateOrderDTO) {
+  async createOrder(dto: CreateOrderDTO): Promise<IResponse<Order>> {
     try {
-      const existingCart = await this.CTOrderSDK.findCartById(
+      const existingCart: Cart | undefined = await this.CTOrderSDK.findCartById(
         dto.cartId,
         this.customerId,
       );
