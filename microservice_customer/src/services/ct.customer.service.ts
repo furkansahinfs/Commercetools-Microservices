@@ -18,7 +18,7 @@ import {
 import { CTService } from "./ct.service";
 import { CustomerActions } from "src/enums/customerAction.enum";
 import { CTCustomerSDK } from "src/commercetools";
-import { IResponse } from "src/types";
+import { IResponse, QueryData } from "src/types";
 import { getWhereString } from "./utils";
 
 @Injectable()
@@ -31,7 +31,7 @@ export class CTCustomerService extends CTService {
 
   async getCustomers(
     dto: GetCustomersFilterDTO,
-  ): Promise<IResponse<{ total: number; results: Customer[] }>> {
+  ): Promise<IResponse<QueryData<Customer>>> {
     const where = dto?.customerId
       ? getWhereString({ customerIdParam: dto.customerId })
       : dto?.customerNumber

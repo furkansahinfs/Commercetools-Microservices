@@ -1,6 +1,6 @@
 import { HttpStatus } from "@nestjs/common";
 
-export type IResponse = {
+export type IResponse<T> = {
   status: HttpStatus;
   success: boolean;
   data?: any;

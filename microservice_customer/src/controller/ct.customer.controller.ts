@@ -11,7 +11,7 @@ import {
   UpdateCustomerPayload,
 } from "src/dto";
 import { Customer, CustomerSignInResult } from "@commercetools/platform-sdk";
-import { IResponse } from "src/types";
+import { IResponse, QueryData } from "src/types";
 
 @Controller()
 export class CTCustomerController {
@@ -20,12 +20,9 @@ export class CTCustomerController {
   @MessagePattern({ role: "customers", cmd: "get" })
   @Roles(ROLES.ADMIN, ROLES.CT_ADMIN)
   @UseGuards(RolesGuard)
-  async getCustomers(payload: GetCustomersFilterPayload): Promise<
-    IResponse<{
-      total: number;
-      results: Customer[];
-    }>
-  > {
+  async getCustomers(
+    payload: GetCustomersFilterPayload,
+  ): Promise<IResponse<QueryData<Customer>>> {
     return await this.ctCustomerService.getCustomers(payload.dto);
   }
 

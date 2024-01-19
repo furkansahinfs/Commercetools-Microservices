@@ -4,8 +4,9 @@ import { I18nService } from "nestjs-i18n";
 import { ResponseBody } from "src/util";
 import { CTProductSDK } from "src/commercetools";
 import { generateWhereIdString } from "./utils";
-import { IResponse } from "src/types";
+import { IResponse, QueryData } from "src/types";
 import { CTService } from "./ct.service";
+import { Product } from "@commercetools/platform-sdk";
 
 @Injectable()
 export class CTProductService extends CTService {
@@ -15,7 +16,9 @@ export class CTProductService extends CTService {
     this.CTProductSDK = new CTProductSDK();
   }
 
-  async getProducts(dto: GetProductsFilterDTO): Promise<IResponse> {
+  async getProducts(
+    dto: GetProductsFilterDTO,
+  ): Promise<IResponse<QueryData<Product>>> {
     const where = dto?.productIds
       ? generateWhereIdString(dto.productIds)
       : undefined;
@@ -42,7 +45,7 @@ export class CTProductService extends CTService {
       });
   }
 
-  async getProductWithId(productId: string): Promise<IResponse> {
+  async getProductWithId(productId: string): Promise<IResponse<Product>> {
     return await this.CTProductSDK.findProductById(productId)
       .then(({ body }) =>
         ResponseBody().status(HttpStatus.OK).data(body).build(),

@@ -1,4 +1,4 @@
-export function generateWhereIdString(productIdParam: string) {
+export function generateWhereIdString(productIdParam: string): string {
   const ids = productIdParam.split(",");
 
   return ids?.length > 1
@@ -6,7 +6,7 @@ export function generateWhereIdString(productIdParam: string) {
     : `id="${productIdParam}"`;
 }
 
-function createWhereStringForInPredicate(predicateStringArr: string[]) {
+function createWhereStringForInPredicate(predicateStringArr: string[]): string {
   const predicateStringsWithQuote = '"' + predicateStringArr.join('", "') + '"';
 
   return predicateStringsWithQuote;
