@@ -12,7 +12,7 @@ import {
   ResponseBody,
 } from "src/util";
 import { conf } from "src/config";
-import { IResponse, LoggedInData, Tokens, User } from "src/types";
+import { IResponse, SignInResults, Tokens, User } from "src/types";
 import { UserRepository } from "src/repository";
 import { CTCustomerService } from "./ct.customer.service";
 import { getJWTUser } from "src/util/jwt.util";
@@ -25,7 +25,7 @@ export class AuthService {
     private ctCustomerService: CTCustomerService,
   ) {}
 
-  async login(dto: LoginDTO): Promise<IResponse<LoggedInData>> {
+  async login(dto: LoginDTO): Promise<IResponse<SignInResults>> {
     const granty_type = dto.granty_type;
 
     if (granty_type === GrantyTypes.PASSWORD) {
@@ -131,7 +131,7 @@ export class AuthService {
   private async authenticateUserByPassword(
     email: string,
     password: string,
-  ): Promise<IResponse<LoggedInData>> {
+  ): Promise<IResponse<SignInResults>> {
     const maybeUser: User | undefined =
       await this.userRepository.findByUsername(email, {
         password: true,

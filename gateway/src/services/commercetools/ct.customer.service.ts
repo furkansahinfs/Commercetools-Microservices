@@ -16,7 +16,7 @@ export class CTCustomerService {
 
   public async me(dto) {
     return this.ctCustomerClient.send(
-      { role: "customers", cmd: "get-me" },
+      { role: "customers/me", cmd: "get" },
       { dto, user: this.authenticatedUser },
     );
   }

@@ -3,7 +3,7 @@ export type Tokens = {
   refresh_token: string;
 };
 
-export type LoggedInData = {
+export type SignInResults = {
   access_token: string;
   refresh_token: string;
   role: string;
