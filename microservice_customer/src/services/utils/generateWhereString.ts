@@ -1,7 +1,7 @@
 export const getWhereString = (whereParams: {
   customerIdParam?: string;
   customerNumberParam?: string;
-}) => {
+}): string | undefined => {
   const { customerIdParam, customerNumberParam } = whereParams;
 
   if (customerIdParam) {
@@ -23,7 +23,9 @@ export const getWhereString = (whereParams: {
   return undefined;
 };
 
-const createWhereStringForInPredicate = (predicateStringArr: string[]) => {
+const createWhereStringForInPredicate = (
+  predicateStringArr: string[],
+): string => {
   const predicateStringsWithQuote = '"' + predicateStringArr.join('", "') + '"';
 
   return predicateStringsWithQuote;

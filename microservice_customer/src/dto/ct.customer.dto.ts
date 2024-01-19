@@ -5,6 +5,7 @@ import {
   IsNumberString,
   IsOptional,
   IsString,
+  ValidateIf,
 } from "class-validator";
 import { CustomerActions } from "src/enums/customerAction.enum";
 import { User } from "src/types";
@@ -69,9 +70,12 @@ export class UpdateCustomerDTO {
   @IsString()
   actionType: string;
 
+  @ValidateIf(
+    (o) =>
+      o.actionType === CustomerActions.SET_SHIPPING_ADDRESS ||
+      o.actionType === CustomerActions.SET_BILLING_ADDRESS,
+  )
   @IsNotEmpty()
-  address: any;
-
   @IsOptional()
   @IsString()
   customerId?: string;

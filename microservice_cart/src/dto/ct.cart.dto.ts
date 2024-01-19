@@ -26,6 +26,7 @@ export class GetCartFilterPayload extends Payload<GetCartFilterDTO> {
 }
 
 export class CreateCartDTO {
+  @IsOptional()
   products?: LineItemDraft[];
 }
 
