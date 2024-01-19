@@ -4,7 +4,7 @@ import { I18nService } from "nestjs-i18n";
 import { GetUsersFilterDTO } from "src/dto";
 import { ResponseBody, getJWTUserId } from "src/util";
 import { UserRepository } from "src/repository";
-import { User } from "src/types";
+import { IResponse, User } from "src/types";
 import { get } from "lodash";
 import { REQUEST } from "@nestjs/core";
 import { Request } from "express";
@@ -18,7 +18,7 @@ export class UserService {
     @Inject(REQUEST) protected readonly request: Request,
   ) {}
 
-  async getUsers(dto: GetUsersFilterDTO) {
+  async getUsers(dto: GetUsersFilterDTO): Promise<IResponse<User | User[]>> {
     if (dto?.userId || dto?.username) {
       return await this.getUserWithFilter(dto);
     }
@@ -26,7 +26,7 @@ export class UserService {
     return ResponseBody().status(HttpStatus.OK).data(users).build();
   }
 
-  async getMe() {
+  async getMe(): Promise<IResponse<User>> {
     const user: User | undefined = await this.getAuthenticatedUser();
     if (user) {
       return ResponseBody().status(HttpStatus.OK).data(user).build();
@@ -38,12 +38,14 @@ export class UserService {
       .build();
   }
 
-  private async getUserWithFilter(dto: GetUsersFilterDTO) {
-    const user = dto?.userId
+  private async getUserWithFilter(
+    dto: GetUsersFilterDTO,
+  ): Promise<IResponse<User>> {
+    const user: User | undefined = dto?.userId
       ? await this.userRepository.findByUserId(dto.userId)
       : dto?.username
       ? await this.userRepository.findByUsername(dto.username)
-      : null;
+      : undefined;
     if (user) {
       return ResponseBody().status(HttpStatus.OK).data(user).build();
     }

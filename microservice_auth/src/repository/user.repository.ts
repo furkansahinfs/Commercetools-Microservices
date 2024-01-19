@@ -4,6 +4,7 @@ import { I18nService } from "nestjs-i18n";
 import { GetUsersFilterDTO, RegisterDTO } from "src/dto";
 import { ROLES } from "src/enums";
 import { conf } from "src/config";
+import { User as PrismaUser } from "@prisma/client";
 import { User } from "src/types";
 
 @Injectable()
@@ -38,7 +39,7 @@ export class UserRepository {
     username: string,
     exclude?: { password: true },
   ): Promise<User> {
-    const user = await this.prisma.user.findFirst({
+    const user: User = await this.prisma.user.findFirst({
       where: {
         email: username,
       },
@@ -63,7 +64,7 @@ export class UserRepository {
     userId: string,
     exclude?: { password: true },
   ): Promise<User> {
-    const user = await this.prisma.user.findFirst({
+    const user: User = await this.prisma.user.findFirst({
       where: {
         id: userId,
       },
@@ -114,7 +115,7 @@ export class UserRepository {
   }
 
   //TODO describe data prisma type
-  public async updateUser(userId: string, data) {
+  public async updateUser(userId: string, data): Promise<PrismaUser> {
     return await this.prisma.user.update({
       where: {
         id: userId,

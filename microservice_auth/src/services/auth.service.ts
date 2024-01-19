@@ -10,11 +10,9 @@ import {
   generateToken,
   verifyToken,
   ResponseBody,
-  getJWTUsername,
-  getJWTUserId,
 } from "src/util";
 import { conf } from "src/config";
-import { User } from "src/types";
+import { IResponse, LoggedInData, Tokens, User } from "src/types";
 import { UserRepository } from "src/repository";
 import { CTCustomerService } from "./ct.customer.service";
 import { getJWTUser } from "src/util/jwt.util";
@@ -27,13 +25,15 @@ export class AuthService {
     private ctCustomerService: CTCustomerService,
   ) {}
 
-  async login(dto: LoginDTO) {
+  async login(dto: LoginDTO): Promise<IResponse<LoggedInData>> {
     const granty_type = dto.granty_type;
 
     if (granty_type === GrantyTypes.PASSWORD) {
       const email = dto.email;
       const password = dto.password;
-      const user = await this.userRepository.findByUsername(email);
+      const user: User | undefined = await this.userRepository.findByUsername(
+        email,
+      );
 
       if (user) {
         return await this.authenticateUserByPassword(email, password);
@@ -51,7 +51,10 @@ export class AuthService {
       .build();
   }
 
-  async refreshToken(dto: RefreshTokenDTO, request: Request) {
+  async refreshToken(
+    dto: RefreshTokenDTO,
+    request: Request,
+  ): Promise<IResponse<Tokens>> {
     const granty_type = dto.granty_type;
     if (granty_type === GrantyTypes.REFRESH) {
       return this.authenticateUserByRefreshToken(request);
@@ -63,8 +66,9 @@ export class AuthService {
       .build();
   }
 
-  async register(dto: RegisterDTO) {
-    const maybeUser = await this.userRepository.findByUsername(dto.email);
+  async register(dto: RegisterDTO): Promise<IResponse<User>> {
+    const maybeUser: User | undefined =
+      await this.userRepository.findByUsername(dto.email);
 
     if (maybeUser) {
       return ResponseBody()
@@ -74,9 +78,11 @@ export class AuthService {
     }
 
     try {
-      const user = await this.createUser(dto);
+      const user: User = await this.createUser(dto);
       await this.createCommercetoolsCustomer(dto, user.id);
-      const updatedUser = await this.userRepository.findByUsername(user.email);
+      const updatedUser: User = await this.userRepository.findByUsername(
+        user.email,
+      );
 
       return ResponseBody()
         .status(HttpStatus.CREATED)
@@ -104,8 +110,11 @@ export class AuthService {
     return await this.userRepository.saveUser(dto, encryptedPassword);
   }
 
-  private async createCommercetoolsCustomer(dto: RegisterDTO, userId: string) {
-    const ctCustomer: any = await this.ctCustomerService.createCustomer({
+  private async createCommercetoolsCustomer(
+    dto: RegisterDTO,
+    userId: string,
+  ): Promise<void> {
+    const ctCustomer = await this.ctCustomerService.createCustomer({
       ...dto,
       customerNumber: userId,
     });
@@ -119,10 +128,15 @@ export class AuthService {
     });
   }
 
-  private async authenticateUserByPassword(email: string, password: string) {
-    const maybeUser = await this.userRepository.findByUsername(email, {
-      password: true,
-    });
+  private async authenticateUserByPassword(
+    email: string,
+    password: string,
+  ): Promise<IResponse<LoggedInData>> {
+    const maybeUser: User | undefined =
+      await this.userRepository.findByUsername(email, {
+        password: true,
+      });
+
     if (!maybeUser) {
       return ResponseBody()
         .status(HttpStatus.NOT_FOUND)
@@ -159,10 +173,13 @@ export class AuthService {
       .build();
   }
 
-  private async authenticateUserByRefreshToken(request: Request) {
+  private async authenticateUserByRefreshToken(
+    request: Request,
+  ): Promise<IResponse<Tokens>> {
     const refreshToken = get(request, "headers.refresh_token");
-    const newTokens: false | { access_token: string; refresh_token: string } =
-      await this.refreshAllTokens({ refreshToken: refreshToken as string });
+    const newTokens: false | Tokens = await this.refreshAllTokens({
+      refreshToken: refreshToken as string,
+    });
 
     if (newTokens === false) {
       return ResponseBody()
@@ -174,18 +191,25 @@ export class AuthService {
     return ResponseBody().status(HttpStatus.OK).data(newTokens).build();
   }
 
-  private async refreshAllTokens({ refreshToken }: { refreshToken: string }) {
+  private async refreshAllTokens({
+    refreshToken,
+  }: {
+    refreshToken: string;
+  }): Promise<false | Tokens> {
     try {
       const { decoded } = verifyToken(refreshToken, "REFRESH_TOKEN_PUBLIC_KEY");
+
       if (!decoded) {
         return false;
       }
+
       const user = getJWTUser(refreshToken, "REFRESH_TOKEN_PUBLIC_KEY");
 
       if (!user["username"] || !user["userId"]) {
         return false;
       }
-      const newAccessToken = generateToken(
+
+      const newAccessToken: string = generateToken(
         {
           username: user["username"],
           userId: user["userId"],
@@ -194,7 +218,8 @@ export class AuthService {
         "ACCESS_TOKEN_PRIVATE_KEY",
         { expiresIn: conf.ACCESS_TOKEN_TIME },
       );
-      const newRefreshToken = generateToken(
+
+      const newRefreshToken: string = generateToken(
         {
           username: user["username"],
           userId: user["userId"],
@@ -203,6 +228,7 @@ export class AuthService {
         "REFRESH_TOKEN_PRIVATE_KEY",
         { expiresIn: conf.REFRESH_TOKEN_TIME },
       );
+
       return { access_token: newAccessToken, refresh_token: newRefreshToken };
     } catch (error) {
       console.error(error);

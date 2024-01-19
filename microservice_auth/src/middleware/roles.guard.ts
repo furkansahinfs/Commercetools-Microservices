@@ -23,11 +23,11 @@ export class RolesGuard implements CanActivate {
     return this.matchRoles(roles, role);
   }
 
-  matchRoles(roles: string[], userRole: string) {
+  matchRoles(roles: string[], userRole: string): boolean {
     return roles.some((role) => role === conf.ROLE_KEY.concat(userRole, ""));
   }
 
-  getRoleFromToken(request) {
+  getRoleFromToken(request): string | undefined {
     const accessTokenStr = get(request, "headers.authorization");
     const accessToken = accessTokenStr?.replace("Bearer ", "");
     return getJWTUser(accessToken, "ACCESS_TOKEN_PUBLIC_KEY")?.["role"];

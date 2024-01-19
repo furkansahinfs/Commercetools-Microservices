@@ -4,7 +4,6 @@ import { AuthService } from "src/services";
 import { HttpStatus, Injectable, NestMiddleware } from "@nestjs/common";
 import { I18nService } from "nestjs-i18n";
 import { RequestWithUser } from "src/interface";
-import { ROLES } from "src/enums";
 
 @Injectable()
 export class JWTMiddleware implements NestMiddleware {
@@ -13,7 +12,11 @@ export class JWTMiddleware implements NestMiddleware {
     private readonly i18n: I18nService,
   ) {}
 
-  async use(req: RequestWithUser, res: Response, next: () => void) {
+  async use(
+    req: RequestWithUser,
+    res: Response,
+    next: () => void,
+  ): Promise<Response<any, Record<string, any>>> {
     const accessTokenStr = req.headers.authorization;
     const accessToken = accessTokenStr?.replace("Bearer ", "");
     let user;
@@ -54,7 +57,9 @@ export class JWTMiddleware implements NestMiddleware {
     next();
   }
 
-  private generateUnauthorizedResponse(res: Response) {
+  private generateUnauthorizedResponse(
+    res: Response,
+  ): Response<any, Record<string, any>> {
     return res.status(HttpStatus.UNAUTHORIZED).send(
       ResponseBody()
         .status(HttpStatus.UNAUTHORIZED)

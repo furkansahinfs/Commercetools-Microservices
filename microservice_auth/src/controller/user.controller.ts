@@ -4,6 +4,7 @@ import { UserService } from "src/services";
 import { RolesGuard } from "src/middleware";
 import { Roles } from "src/util";
 import { ROLES } from "src/enums";
+import { IResponse, User } from "src/types";
 
 @Controller("users")
 export class UserController {
@@ -12,12 +13,14 @@ export class UserController {
   @Get()
   @Roles(ROLES.ADMIN)
   @UseGuards(RolesGuard)
-  async getUsers(@Query() filter: GetUsersFilterDTO) {
+  async getUsers(
+    @Query() filter: GetUsersFilterDTO,
+  ): Promise<IResponse<User | User[]>> {
     return await this.userService.getUsers(filter);
   }
 
   @Get("/me")
-  async getMe() {
+  async getMe(): Promise<IResponse<User>> {
     return await this.userService.getMe();
   }
 }
