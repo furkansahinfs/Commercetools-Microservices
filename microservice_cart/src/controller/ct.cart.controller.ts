@@ -9,6 +9,8 @@ import {
   GetCartFilterPayload,
   UpdateCartPayload,
 } from "src/dto";
+import { IResponse } from "src/types";
+import { Cart, CartPagedQueryResponse } from "@commercetools/platform-sdk";
 
 @Controller()
 export class CTCartController {
@@ -17,26 +19,29 @@ export class CTCartController {
   @MessagePattern({ role: "carts", cmd: "get" })
   @Roles(ROLES.ADMIN, ROLES.CT_ADMIN)
   @UseGuards(RolesGuard)
-  async getCarts(payload: GetCartFilterPayload) {
+  async getCarts(
+    payload: GetCartFilterPayload,
+  ): Promise<IResponse<CartPagedQueryResponse>> {
     this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
     return await this.ctCartService.getCarts({ cartId: payload.dto.cartId });
   }
 
   @MessagePattern({ role: "carts/me", cmd: "get" })
-  @UseGuards(RolesGuard)
-  async getMyActiveCart(payload: GetCartFilterPayload) {
+  async getMyActiveCart(
+    payload: GetCartFilterPayload,
+  ): Promise<IResponse<Cart>> {
     this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
     return await this.ctCartService.getCustomerActiveCart();
   }
 
   @MessagePattern({ role: "carts", cmd: "post" })
-  async createCart(payload: CreateCartPayload) {
+  async createCart(payload: CreateCartPayload): Promise<IResponse<Cart>> {
     this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
     return await this.ctCartService.createCart(payload.dto);
   }
 
   @MessagePattern({ role: "carts/action", cmd: "post" })
-  async updateCart(payload: UpdateCartPayload) {
+  async updateCart(payload: UpdateCartPayload): Promise<IResponse<Cart>> {
     this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
     return await this.ctCartService.updateCart(payload.dto);
   }
