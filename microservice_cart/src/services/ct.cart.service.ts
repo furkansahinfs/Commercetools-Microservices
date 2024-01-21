@@ -9,6 +9,7 @@ import {
   CartPagedQueryResponse,
   CartUpdateAction,
   ClientResponse,
+  Customer,
   DiscountCode,
 } from "@commercetools/platform-sdk";
 import { CartActions } from "src/enums";
@@ -60,9 +61,10 @@ export class CTCartService extends CTService {
         lineItems: dto.products,
       };
       return await this.CTCartSDK.createCart(cartDraft)
-        .then(({ body }) =>
-          ResponseBody().status(HttpStatus.OK).data(body).build(),
-        )
+        .then(async ({ body }) => {
+          const updatedCart: Cart = await this.setCartDefaults(body.id);
+          return ResponseBody().status(HttpStatus.OK).data(updatedCart).build();
+        })
         .catch((error) =>
           ResponseBody().status(error?.statusCode).message({ error }).build(),
         );
@@ -129,7 +131,8 @@ export class CTCartService extends CTService {
     const cart: Cart | undefined = cartQueryResponse.body?.results?.[0];
 
     if (cart) {
-      return ResponseBody().status(HttpStatus.OK).data(cart).build();
+      const updatedCart: Cart = await this.setCartDefaults(cart.id);
+      return ResponseBody().status(HttpStatus.OK).data(updatedCart).build();
     }
 
     const cartDraft: CartDraft = {
@@ -138,9 +141,12 @@ export class CTCartService extends CTService {
       lineItems: [],
     };
     return await this.CTCartSDK.createCart(cartDraft)
-      .then((createdCart) =>
-        ResponseBody().status(HttpStatus.OK).data(createdCart.body).build(),
-      )
+      .then(async (createdCart) => {
+        const updatedCart: Cart = await this.setCartDefaults(
+          createdCart.body.id,
+        );
+        return ResponseBody().status(HttpStatus.OK).data(updatedCart).build();
+      })
       .catch((error) =>
         ResponseBody().status(error?.statusCode).message({ error }).build(),
       );
@@ -157,6 +163,56 @@ export class CTCartService extends CTService {
       .catch((error) =>
         ResponseBody().status(error?.statusCode).message({ error }).build(),
       );
+  }
+
+  private async setCartDefaults(cartId: string): Promise<Cart> {
+    const customer: Customer = await this.CTCartSDK.getCustomerById(
+      this.customerId,
+    );
+
+    const where = cartId ? `id="${cartId}"` : `customerId="${this.customerId}"`;
+    const cartQueryResponse: ClientResponse<CartPagedQueryResponse> =
+      await this.CTCartSDK.findCarts({
+        where,
+        limit: 1,
+        offset: 0,
+      });
+
+    const cart = cartQueryResponse?.body?.results?.[0];
+
+    if (customer && cart) {
+      const updateCartActions: Array<UpdateCartDTO> = [
+        {
+          cartId,
+          actionType: "setShippingAddress",
+          address: customer.addresses.find(
+            (item) => item.id === customer.defaultShippingAddressId,
+          ),
+        },
+        {
+          cartId,
+          actionType: "setBillingAddress",
+          address: customer.addresses.find(
+            (item) => item.id === customer.defaultBillingAddressId,
+          ),
+        },
+      ];
+      return await this.updateCartDefaulsInOrder(updateCartActions);
+    }
+  }
+
+  private async updateCartDefaulsInOrder(actions: Array<UpdateCartDTO>) {
+    const res = await actions.reduce(
+      (p, v) => p.then((a) => this.updateCart(v).then((r) => a.concat([r]))),
+      Promise.resolve([]),
+    );
+
+    return Promise.all(res).then((values) => {
+      const successResponses = values.filter(
+        (promise: IResponse<Cart>) => promise.success && promise.data,
+      );
+      return successResponses[successResponses.length - 1].data;
+    });
   }
 
   private async checkDiscountCode(discountCode: string): Promise<DiscountCode> {

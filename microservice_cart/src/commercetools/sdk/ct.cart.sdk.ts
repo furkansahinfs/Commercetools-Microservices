@@ -5,6 +5,7 @@ import {
   CartUpdate,
   CartUpdateAction,
   ClientResponse,
+  Customer,
   DiscountCode,
   DiscountCodePagedQueryResponse,
 } from "@commercetools/platform-sdk";
@@ -73,6 +74,12 @@ export class CTCartSDK implements ICTCartSDK {
         .execute();
 
     return discountResponse.body?.results?.[0];
+  }
+
+  async getCustomerById(customerId: string): Promise<Customer> {
+    const customerByIdResponse: ClientResponse<Customer> =
+      await CTApiRoot.customers().withId({ ID: customerId }).get().execute();
+    return customerByIdResponse.body ?? undefined;
   }
 
   private async getCartVersion(cartId: string): Promise<number> {
