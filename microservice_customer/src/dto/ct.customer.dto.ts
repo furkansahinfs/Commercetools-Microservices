@@ -10,6 +10,7 @@ import {
 import { CustomerActions } from "src/enums/customerAction.enum";
 import { User } from "src/types";
 import { Payload } from "./payload";
+import { AddressDraft } from "@commercetools/platform-sdk";
 
 export class CreateCustomerDTO {
   @IsNotEmpty()
@@ -76,7 +77,7 @@ export class UpdateCustomerDTO {
       o.actionType === CustomerActions.SET_BILLING_ADDRESS,
   )
   @IsNotEmpty()
-  address?: string;
+  address?: AddressDraft;
 
   @IsOptional()
   @IsString()
