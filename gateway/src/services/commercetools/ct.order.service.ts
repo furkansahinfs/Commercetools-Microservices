@@ -23,7 +23,7 @@ export class CTOrderService {
 
   public getMyOrders(dto) {
     return this.ctOrderClient.send(
-      { role: "orders", cmd: "get-me" },
+      { role: "orders/me", cmd: "get" },
       { dto, user: this.authenticatedUser },
     );
   }

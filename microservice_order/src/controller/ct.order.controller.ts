@@ -22,7 +22,7 @@ export class CTOrderController {
     return await this.ctOrderService.getOrders(payload.dto);
   }
 
-  @MessagePattern({ role: "orders", cmd: "get-me" })
+  @MessagePattern({ role: "orders/me", cmd: "get" })
   async getMyOrders(
     payload: GetOrdersFilterPayload,
   ): Promise<IResponse<QueryData<Order>>> {
