@@ -1,0 +1,108 @@
+{
+    "carts": {
+        "post": {
+            "message": {
+                "role": "carts",
+                "cmd": "post"
+            },
+            "sendUser": true
+        },
+        "get": {
+            "message": {
+                "role": "carts",
+                "cmd": "get"
+            },
+            "sendUser": true
+        },
+        "get/me": {
+            "message": {
+                "role": "carts/me",
+                "cmd": "get"
+            },
+            "sendUser": true
+        },
+        "post/action": {
+            "message": {
+                "role": "carts/action",
+                "cmd": "post"
+            },
+            "sendUser": true
+        },
+        "delete": {
+            "message": {
+                "role": "carts",
+                "cmd": "delete"
+            },
+            "sendUser": true
+        }
+    },
+    "customers": {
+        "post/new": {
+            "message": {
+                "role": "customers",
+                "cmd": "post/new"
+            },
+            "sendUser": true
+        },
+        "get": {
+            "message": {
+                "role": "customers",
+                "cmd": "get"
+            },
+            "sendUser": true
+        },
+        "get/me": {
+            "message": {
+                "role": "customers/me",
+                "cmd": "get"
+            },
+            "sendUser": true
+        },
+        "post/action": {
+            "message": {
+                "role": "customers/action",
+                "cmd": "post"
+            },
+            "sendUser": true
+        },
+        "delete": {
+            "message": {
+                "role": "customers",
+                "cmd": "delete"
+            },
+            "sendUser": true
+        }
+    },
+    "orders": {
+        "post": {
+            "message": {
+                "role": "orders",
+                "cmd": "post"
+            },
+            "sendUser": true
+        },
+        "get": {
+            "message": {
+                "role": "orders",
+                "cmd": "get"
+            },
+            "sendUser": true
+        },
+        "get/me": {
+            "message": {
+                "role": "orders/me",
+                "cmd": "get"
+            },
+            "sendUser": true
+        }
+    },
+    "products": {
+        "get": {
+            "message": {
+                "role": "products",
+                "cmd": "get"
+            },
+            "sendUser": false
+        }
+    }
+}
