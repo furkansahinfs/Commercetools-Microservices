@@ -8,11 +8,6 @@ export class CTCartController {
   private path = "carts";
   constructor(private readonly ctService: CTService) {}
 
-  @Post()
-  async createCart(@Query() dto) {
-    return this.ctService.send(this.path, "post", dto);
-  }
-
   @Get()
   async getCarts(@Query() dto) {
     return this.ctService.send(this.path, "get", dto);
@@ -21,6 +16,11 @@ export class CTCartController {
   @Get("/me")
   async getMyCarts(@Query() dto) {
     return this.ctService.send(this.path, "get/me", dto);
+  }
+
+  @Post()
+  async createCart(@Query() dto) {
+    return this.ctService.send(this.path, "post", dto);
   }
 
   @Post("/action")

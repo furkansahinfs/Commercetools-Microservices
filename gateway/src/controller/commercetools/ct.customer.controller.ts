@@ -8,14 +8,14 @@ export class CTCustomerController {
   private path = "customers";
   constructor(private readonly ctService: CTService) {}
 
-  @Get("/me")
-  async getMe(@Query() dto) {
-    return this.ctService.send(this.path, "get/me", dto);
-  }
-
   @Get()
   async getCustomers(@Query() dto) {
     return this.ctService.send(this.path, "get", dto);
+  }
+
+  @Get("/me")
+  async getMe(@Query() dto) {
+    return this.ctService.send(this.path, "get/me", dto);
   }
 
   @Post("/new")
