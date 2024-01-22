@@ -76,7 +76,7 @@ export class UpdateCustomerDTO {
       o.actionType === CustomerActions.SET_BILLING_ADDRESS,
   )
   @IsNotEmpty()
-  address: any;
+  address?: string;
 
   @IsOptional()
   @IsString()
