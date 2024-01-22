@@ -1,14 +1,15 @@
 import { Controller, Get, Query } from "@nestjs/common";
-import { CTProductService } from "src/services";
+import { CTService } from "src/services";
 
 /** DTO validated in services */
 
 @Controller("products")
 export class CTProductController {
-  constructor(private readonly ctProductService: CTProductService) {}
+  private path = "products";
+  constructor(private readonly ctService: CTService) {}
 
   @Get()
   async getProducts(@Query() dto) {
-    return this.ctProductService.getProducts(dto);
+    return this.ctService.send(this.path, "get", dto);
   }
 }

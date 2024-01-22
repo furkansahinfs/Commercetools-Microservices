@@ -1,2 +1,2 @@
 export { AuthService } from "./auth.service";
-export * from "./commercetools";
+export { CTService } from "./ct.service";

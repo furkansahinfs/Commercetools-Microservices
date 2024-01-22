@@ -1,34 +1,35 @@
 import { Body, Controller, Delete, Get, Post, Query } from "@nestjs/common";
-import { CTCustomerService } from "src/services";
+import { CTService } from "src/services";
 
 /** DTO validated in services */
 
 @Controller("customers")
 export class CTCustomerController {
-  constructor(private readonly ctCustomerService: CTCustomerService) {}
-
-  @Get("/me")
-  async getMe(@Query() dto) {
-    return this.ctCustomerService.me(dto);
-  }
+  private path = "customers";
+  constructor(private readonly ctService: CTService) {}
 
   @Get()
   async getCustomers(@Query() dto) {
-    return this.ctCustomerService.getCustomers(dto);
+    return this.ctService.send(this.path, "get", dto);
+  }
+
+  @Get("/me")
+  async getMe(@Query() dto) {
+    return this.ctService.send(this.path, "get/me", dto);
   }
 
   @Post("/new")
   async createCustomer(@Body() dto) {
-    return this.ctCustomerService.createCustomer(dto);
+    return this.ctService.send(this.path, "post/new", dto);
   }
 
   @Post("/action")
   async updateCustomer(@Body() dto) {
-    return this.ctCustomerService.updateCustomer(dto);
+    return this.ctService.send(this.path, "post/action", dto);
   }
 
   @Delete()
   async deleteCustomer(@Query() dto) {
-    return this.ctCustomerService.deleteCustomer(dto);
+    return this.ctService.send(this.path, "delete", dto);
   }
 }
