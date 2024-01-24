@@ -9,11 +9,11 @@ export class UserController {
 
   @Get()
   async getUsers(@Query() filter) {
-    return await this.userService.users(filter);
+    return this.userService.users(filter);
   }
 
   @Get("/me")
   async getMe() {
-    return await this.userService.getMe();
+    return this.userService.getMe();
   }
 }

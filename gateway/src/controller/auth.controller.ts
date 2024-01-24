@@ -9,10 +9,10 @@ export class AuthController {
 
   @Post("/login")
   async login(@Body() dto) {
-    return await this.authService.login(dto);
+    return this.authService.login(dto);
   }
   @Post("/register")
   async register(@Body() dto) {
-    return await this.authService.register(dto);
+    return this.authService.register(dto);
   }
 }
