@@ -72,7 +72,7 @@ export class CTCartService extends CTService {
 
     return ResponseBody()
       .status(HttpStatus.NOT_FOUND)
-      .message({ error: this.i18n.t("cart.customer_not_found") })
+      .message({ error: this.i18n.t("cart.cart.customer_not_found") })
       .build();
   }
 
