@@ -23,7 +23,7 @@ export class CTCartController {
     payload: GetCartFilterPayload,
   ): Promise<IResponse<CartPagedQueryResponse>> {
     this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
-    return await this.ctCartService.getCarts({ cartId: payload.dto.cartId });
+    return this.ctCartService.getCarts({ cartId: payload.dto.cartId });
   }
 
   @MessagePattern({ role: "carts/me", cmd: "get" })
@@ -31,18 +31,18 @@ export class CTCartController {
     payload: GetCartFilterPayload,
   ): Promise<IResponse<Cart>> {
     this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
-    return await this.ctCartService.getCustomerActiveCart();
+    return this.ctCartService.getCustomerActiveCart();
   }
 
   @MessagePattern({ role: "carts", cmd: "post" })
   async createCart(payload: CreateCartPayload): Promise<IResponse<Cart>> {
     this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
-    return await this.ctCartService.createCart(payload.dto);
+    return this.ctCartService.createCart(payload.dto);
   }
 
   @MessagePattern({ role: "carts/action", cmd: "post" })
   async updateCart(payload: UpdateCartPayload): Promise<IResponse<Cart>> {
     this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
-    return await this.ctCartService.updateCart(payload.dto);
+    return this.ctCartService.updateCart(payload.dto);
   }
 }

@@ -13,6 +13,6 @@ export class CTProductController {
   async getProducts(
     payload: GetProductsFilterPayload,
   ): Promise<IResponse<QueryData<Product>>> {
-    return await this.ctProductService.getProducts(payload.dto);
+    return this.ctProductService.getProducts(payload.dto);
   }
 }

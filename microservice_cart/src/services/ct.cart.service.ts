@@ -40,7 +40,7 @@ export class CTCartService extends CTService {
       ? `id="${cartId}"`
       : `customerId="${this.customerId}"`;
 
-    return await this.CTCartSDK.findCarts({
+    return this.CTCartSDK.findCarts({
       where: whereString,
       limit: this.getLimit(),
       offset: this.getOffset(),
@@ -60,7 +60,7 @@ export class CTCartService extends CTService {
         customerId: this.customerId,
         lineItems: dto.products,
       };
-      return await this.CTCartSDK.createCart(cartDraft)
+      return this.CTCartSDK.createCart(cartDraft)
         .then(async ({ body }) => {
           const updatedCart: Cart = await this.setCartDefaults(body.id);
           return ResponseBody().status(HttpStatus.OK).data(updatedCart).build();
@@ -116,7 +116,7 @@ export class CTCartService extends CTService {
     }
 
     actions.push(action);
-    return await this.updateCartWithActions(actions, cartId);
+    return this.updateCartWithActions(actions, cartId);
   }
 
   async getCustomerActiveCart(): Promise<IResponse<Cart>> {
@@ -140,7 +140,7 @@ export class CTCartService extends CTService {
       customerId: this.customerId,
       lineItems: [],
     };
-    return await this.CTCartSDK.createCart(cartDraft)
+    return this.CTCartSDK.createCart(cartDraft)
       .then(async (createdCart) => {
         const updatedCart: Cart = await this.setCartDefaults(
           createdCart.body.id,
@@ -156,7 +156,7 @@ export class CTCartService extends CTService {
     lineItemsAction: CartUpdateAction[],
     cartId: string,
   ): Promise<IResponse<Cart>> {
-    return await this.CTCartSDK.updateCart(cartId, lineItemsAction)
+    return this.CTCartSDK.updateCart(cartId, lineItemsAction)
       .then(({ body }) =>
         ResponseBody().status(HttpStatus.OK).data(body).build(),
       )
@@ -197,7 +197,7 @@ export class CTCartService extends CTService {
           ),
         },
       ];
-      return await this.updateCartDefaulsInOrder(updateCartActions);
+      return this.updateCartDefaulsInOrder(updateCartActions);
     }
   }
 
@@ -216,6 +216,6 @@ export class CTCartService extends CTService {
   }
 
   private async checkDiscountCode(discountCode: string): Promise<DiscountCode> {
-    return await this.CTCartSDK.getDiscount(discountCode);
+    return this.CTCartSDK.getDiscount(discountCode);
   }
 }

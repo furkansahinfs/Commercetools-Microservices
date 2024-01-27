@@ -19,7 +19,7 @@ export class CTOrderController {
     payload: GetOrdersFilterPayload,
   ): Promise<IResponse<QueryData<Order>>> {
     this.ctOrderService.setCTCustomer(payload.user.ct_customer_id);
-    return await this.ctOrderService.getOrders(payload.dto);
+    return this.ctOrderService.getOrders(payload.dto);
   }
 
   @MessagePattern({ role: "orders/me", cmd: "get" })
@@ -27,12 +27,12 @@ export class CTOrderController {
     payload: GetOrdersFilterPayload,
   ): Promise<IResponse<QueryData<Order>>> {
     this.ctOrderService.setCTCustomer(payload.user.ct_customer_id);
-    return await this.ctOrderService.getMyOrders(payload.dto);
+    return this.ctOrderService.getMyOrders(payload.dto);
   }
 
   @MessagePattern({ role: "orders", cmd: "post" })
   async createOrder(payload: CreateOrderPayload): Promise<IResponse<Order>> {
     this.ctOrderService.setCTCustomer(payload.user.ct_customer_id);
-    return await this.ctOrderService.createOrder(payload.dto);
+    return this.ctOrderService.createOrder(payload.dto);
   }
 }

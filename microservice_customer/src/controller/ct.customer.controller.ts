@@ -23,7 +23,7 @@ export class CTCustomerController {
   async getCustomers(
     payload: GetCustomersFilterPayload,
   ): Promise<IResponse<QueryData<Customer>>> {
-    return await this.ctCustomerService.getCustomers(payload.dto);
+    return this.ctCustomerService.getCustomers(payload.dto);
   }
 
   @MessagePattern({ role: "customers/me", cmd: "get" })
@@ -31,19 +31,19 @@ export class CTCustomerController {
     payload: GetCustomersFilterPayload,
   ): Promise<IResponse<Customer>> {
     this.ctCustomerService.setCTCustomer(payload.user?.ct_customer_id);
-    return await this.ctCustomerService.getMe();
+    return this.ctCustomerService.getMe();
   }
 
   @MessagePattern({ role: "customers", cmd: "post" })
   async create(
     payload: CreateCustomerPayload,
   ): Promise<IResponse<CustomerSignInResult>> {
-    return await this.ctCustomerService.createCustomer(payload.dto);
+    return this.ctCustomerService.createCustomer(payload.dto);
   }
 
   @MessagePattern({ role: "customers/action", cmd: "post" })
   async update(payload: UpdateCustomerPayload): Promise<IResponse<Customer>> {
     this.ctCustomerService.setCTCustomer(payload.user?.ct_customer_id);
-    return await this.ctCustomerService.updateCustomer(payload.dto);
+    return this.ctCustomerService.updateCustomer(payload.dto);
   }
 }
