@@ -9,12 +9,12 @@ import {
   DiscountCode,
   DiscountCodePagedQueryResponse,
 } from "@commercetools/platform-sdk";
-import { ICTCartSDK } from "./ct.cart.sdk.interface";
-import { CTApiRoot } from "../CTApiRoot";
+import { CTCartSDK } from "./cart.sdk.interface";
+import { CTApiRoot } from "src/commercetools";
 
-export class CTCartSDK implements ICTCartSDK {
+export class CTCartSDKImpl implements CTCartSDK {
   async findCarts({ where, limit, offset }) {
-    return await CTApiRoot.carts()
+    return CTApiRoot.carts()
       .get({
         queryArgs: {
           where,
@@ -49,7 +49,7 @@ export class CTCartSDK implements ICTCartSDK {
   }
 
   async createCart(cartDraft: CartDraft): Promise<ClientResponse<Cart>> {
-    return await CTApiRoot.carts().post({ body: cartDraft }).execute();
+    return CTApiRoot.carts().post({ body: cartDraft }).execute();
   }
 
   async updateCart(cartId: string, lineItemsAction: CartUpdateAction[]) {
@@ -59,7 +59,7 @@ export class CTCartSDK implements ICTCartSDK {
       actions: lineItemsAction,
     };
 
-    return await CTApiRoot.carts()
+    return CTApiRoot.carts()
       .withId({ ID: cartId })
       .post({ body: actionBody })
       .execute();

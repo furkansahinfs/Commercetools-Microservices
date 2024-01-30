@@ -1,4 +1,4 @@
-export class CTService {
+export class Service {
   protected customerId: string;
 
   public setCTCustomer(customerId: string) {

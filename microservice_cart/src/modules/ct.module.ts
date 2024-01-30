@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
-import { CTCartController } from "src/controller";
-import { CTCartService } from "src/services";
+import { CartController } from "src/controller";
+import { CartService } from "src/services";
 
 @Module({
-  providers: [CTCartController],
-  controllers: [CTCartService],
+  providers: [CartController],
+  controllers: [CartService],
 })
 export class CommercetoolsModule {}

@@ -1,5 +1,5 @@
 import { Controller, UseGuards } from "@nestjs/common";
-import { CTCartService } from "src/services";
+import { CartService } from "src/services";
 import { ROLES } from "src/enums/roles.enum";
 import { Roles } from "src/util";
 import { RolesGuard } from "src/middleware";
@@ -13,8 +13,8 @@ import { IResponse } from "src/types";
 import { Cart, CartPagedQueryResponse } from "@commercetools/platform-sdk";
 
 @Controller()
-export class CTCartController {
-  constructor(protected readonly ctCartService: CTCartService) {}
+export class CartController {
+  constructor(protected readonly cartService: CartService) {}
 
   @MessagePattern({ role: "carts", cmd: "get" })
   @Roles(ROLES.ADMIN, ROLES.CT_ADMIN)
@@ -22,27 +22,27 @@ export class CTCartController {
   async getCarts(
     payload: GetCartFilterPayload,
   ): Promise<IResponse<CartPagedQueryResponse>> {
-    this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
-    return this.ctCartService.getCarts({ cartId: payload.dto.cartId });
+    this.cartService.setCTCustomer(payload.user.ct_customer_id);
+    return this.cartService.getCarts({ cartId: payload.dto.cartId });
   }
 
   @MessagePattern({ role: "carts/me", cmd: "get" })
   async getMyActiveCart(
     payload: GetCartFilterPayload,
   ): Promise<IResponse<Cart>> {
-    this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
-    return this.ctCartService.getCustomerActiveCart();
+    this.cartService.setCTCustomer(payload.user.ct_customer_id);
+    return this.cartService.getCustomerActiveCart();
   }
 
   @MessagePattern({ role: "carts", cmd: "post" })
   async createCart(payload: CreateCartPayload): Promise<IResponse<Cart>> {
-    this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
-    return this.ctCartService.createCart(payload.dto);
+    this.cartService.setCTCustomer(payload.user.ct_customer_id);
+    return this.cartService.createCart(payload.dto);
   }
 
   @MessagePattern({ role: "carts/action", cmd: "post" })
   async updateCart(payload: UpdateCartPayload): Promise<IResponse<Cart>> {
-    this.ctCartService.setCTCustomer(payload.user.ct_customer_id);
-    return this.ctCartService.updateCart(payload.dto);
+    this.cartService.setCTCustomer(payload.user.ct_customer_id);
+    return this.cartService.updateCart(payload.dto);
   }
 }
