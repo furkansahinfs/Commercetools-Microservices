@@ -1,1 +1,1 @@
-export { CTProductService } from "./ct.product.service";
+export { ProductService } from "./product.service";

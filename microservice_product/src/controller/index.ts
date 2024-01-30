@@ -1,1 +1,1 @@
-export { CTProductController } from "./ct.product.controller";
+export { ProductController } from "./product.controller";

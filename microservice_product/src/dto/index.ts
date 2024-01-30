@@ -1,2 +1,2 @@
-export * from "./ct.product.dto";
+export * from "./product.dto";
 export { Payload } from "./payload";
