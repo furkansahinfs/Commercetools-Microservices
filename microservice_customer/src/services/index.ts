@@ -1,1 +1,1 @@
-export { CTCustomerService } from "./ct.customer.service";
+export { CustomerService } from "./customer.service";

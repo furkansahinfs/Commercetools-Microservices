@@ -1,1 +1,1 @@
-export { CTCustomerController } from "./ct.customer.controller";
+export { CustomerController } from "./customer.controller";

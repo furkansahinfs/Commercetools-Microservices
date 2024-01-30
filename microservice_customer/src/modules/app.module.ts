@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { CTCustomerController } from "src/controller";
-import { CTCustomerService } from "src/services";
+import { CustomerController } from "src/controller";
+import { CustomerService } from "src/services";
 import * as path from "path";
 import { AcceptLanguageResolver, I18nModule } from "nestjs-i18n";
 
@@ -15,7 +15,7 @@ import { AcceptLanguageResolver, I18nModule } from "nestjs-i18n";
       resolvers: [AcceptLanguageResolver],
     }),
   ],
-  controllers: [CTCustomerController],
-  providers: [CTCustomerService],
+  controllers: [CustomerController],
+  providers: [CustomerService],
 })
 export class AppModule {}
