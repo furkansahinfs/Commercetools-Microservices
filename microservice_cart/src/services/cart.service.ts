@@ -60,6 +60,7 @@ export class CartService extends Service {
         currency: "USD",
         customerId: this.customerId,
         lineItems: dto.products,
+        deleteDaysAfterLastModification: 10,
       };
       return this.ctCartSDKImpl
         .createCart(cartDraft)
