@@ -5,10 +5,10 @@ import {
   Order,
   OrderPagedQueryResponse,
 } from "@commercetools/platform-sdk";
-import { CTApiRoot } from "../CTApiRoot";
-import { ICTOrderSDK } from "./ct.order.sdk.interface";
+import { CTApiRoot } from "../commercetools/CTApiRoot";
+import { CTOrderSDK } from "./order.sdk.interface";
 
-export class CTOrderSDK implements ICTOrderSDK {
+export class CTOrderSDKImpl implements CTOrderSDK {
   async findOrders({
     where,
     limit,

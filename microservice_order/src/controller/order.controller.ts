@@ -1,5 +1,5 @@
 import { Controller, UseGuards } from "@nestjs/common";
-import { CTOrderService } from "src/services";
+import { OrderService } from "src/services";
 import { Roles } from "src/util";
 import { RolesGuard } from "src/middleware";
 import { MessagePattern } from "@nestjs/microservices";
@@ -9,8 +9,8 @@ import { IResponse, QueryData } from "src/types";
 import { Order } from "@commercetools/platform-sdk";
 
 @Controller()
-export class CTOrderController {
-  constructor(protected readonly ctOrderService: CTOrderService) {}
+export class OrderController {
+  constructor(protected readonly orderService: OrderService) {}
 
   @MessagePattern({ role: "orders", cmd: "get" })
   @Roles(ROLES.ADMIN, ROLES.CT_ADMIN)
@@ -18,21 +18,21 @@ export class CTOrderController {
   async getOrders(
     payload: GetOrdersFilterPayload,
   ): Promise<IResponse<QueryData<Order>>> {
-    this.ctOrderService.setCTCustomer(payload.user.ct_customer_id);
-    return this.ctOrderService.getOrders(payload.dto);
+    this.orderService.setCTCustomer(payload.user.ct_customer_id);
+    return this.orderService.getOrders(payload.dto);
   }
 
   @MessagePattern({ role: "orders/me", cmd: "get" })
   async getMyOrders(
     payload: GetOrdersFilterPayload,
   ): Promise<IResponse<QueryData<Order>>> {
-    this.ctOrderService.setCTCustomer(payload.user.ct_customer_id);
-    return this.ctOrderService.getMyOrders(payload.dto);
+    this.orderService.setCTCustomer(payload.user.ct_customer_id);
+    return this.orderService.getMyOrders(payload.dto);
   }
 
   @MessagePattern({ role: "orders", cmd: "post" })
   async createOrder(payload: CreateOrderPayload): Promise<IResponse<Order>> {
-    this.ctOrderService.setCTCustomer(payload.user.ct_customer_id);
-    return this.ctOrderService.createOrder(payload.dto);
+    this.orderService.setCTCustomer(payload.user.ct_customer_id);
+    return this.orderService.createOrder(payload.dto);
   }
 }

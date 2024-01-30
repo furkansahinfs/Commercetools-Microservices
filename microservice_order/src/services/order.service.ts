@@ -2,18 +2,18 @@ import { HttpStatus, Injectable } from "@nestjs/common";
 import { CreateOrderDTO, GetOrdersFilterDTO } from "src/dto";
 import { I18nService } from "nestjs-i18n";
 import { ResponseBody } from "src/util";
-import { CTOrderSDK } from "../commercetools";
-import { CTService } from "./ct.service";
+import { Service } from "./service";
 import { generateWhereString } from "./utils";
 import { IResponse, QueryData } from "src/types";
 import { Cart, Order } from "@commercetools/platform-sdk";
+import { CTOrderSDKImpl } from "src/repository";
 
 @Injectable()
-export class CTOrderService extends CTService {
-  CTOrderSDK: CTOrderSDK;
+export class OrderService extends Service {
+  ctOrderSDKImpl: CTOrderSDKImpl;
   constructor(private readonly i18n: I18nService) {
     super();
-    this.CTOrderSDK = new CTOrderSDK();
+    this.ctOrderSDKImpl = new CTOrderSDKImpl();
   }
 
   async getOrders(
@@ -25,11 +25,12 @@ export class CTOrderService extends CTService {
       ? generateWhereString({ orderNumberParam: dto.orderNumber })
       : undefined;
 
-    return this.CTOrderSDK.findOrders({
-      where,
-      limit: this.getLimit(dto?.limit),
-      offset: this.getOffset(dto?.offset),
-    })
+    return this.ctOrderSDKImpl
+      .findOrders({
+        where,
+        limit: this.getLimit(dto?.limit),
+        offset: this.getOffset(dto?.offset),
+      })
       .then(({ body }) =>
         ResponseBody()
           .status(HttpStatus.OK)
@@ -52,11 +53,12 @@ export class CTOrderService extends CTService {
   ): Promise<IResponse<QueryData<Order>>> {
     const where = `customerId="${this.customerId}"`;
 
-    return this.CTOrderSDK.findMyOrders({
-      where,
-      limit: this.getLimit(),
-      offset: this.getOffset(),
-    })
+    return this.ctOrderSDKImpl
+      .findMyOrders({
+        where,
+        limit: this.getLimit(),
+        offset: this.getOffset(),
+      })
       .then(({ body }) =>
         ResponseBody()
           .status(HttpStatus.OK)
@@ -75,7 +77,8 @@ export class CTOrderService extends CTService {
   }
 
   async getOrderWithId(orderId: string): Promise<IResponse<Order>> {
-    return this.CTOrderSDK.findOrderById(orderId)
+    return this.ctOrderSDKImpl
+      .findOrderById(orderId)
       .then(({ body }) =>
         ResponseBody().status(HttpStatus.OK).data(body).build(),
       )
@@ -89,13 +92,12 @@ export class CTOrderService extends CTService {
 
   async createOrder(dto: CreateOrderDTO): Promise<IResponse<Order>> {
     try {
-      const existingCart: Cart | undefined = await this.CTOrderSDK.findCartById(
-        dto.cartId,
-        this.customerId,
-      );
+      const existingCart: Cart | undefined =
+        await this.ctOrderSDKImpl.findCartById(dto.cartId, this.customerId);
 
       if (existingCart?.id) {
-        return this.CTOrderSDK.createOrder(existingCart)
+        return await this.ctOrderSDKImpl
+          .createOrder(existingCart)
           .then(({ body }) =>
             ResponseBody().status(HttpStatus.OK).data(body).build(),
           )

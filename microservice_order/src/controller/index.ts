@@ -1,1 +1,1 @@
-export { CTOrderController } from "./ct.order.controller";
+export { OrderController } from "./order.controller";

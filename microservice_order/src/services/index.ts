@@ -1,1 +1,1 @@
-export { CTOrderService } from "./ct.order.service";
+export { OrderService } from "./order.service";
